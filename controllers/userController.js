@@ -10,10 +10,9 @@ const Users=db.utilisateur
 
 const addUser= async (req,res)=>{
     let infoUser={
-        // tittle:req.body.tittle,
-        // price:req.body.price,
-        // description:req.body.description,
-        // published:req.body.published ? req.body.published :false
+        Nom:req.body.Nom,
+        Email:req.Email,
+        Password:req.Password
     }
 
     const users = await Users.create(infoUser)

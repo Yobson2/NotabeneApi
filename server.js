@@ -13,7 +13,7 @@ const app=express();
 
 //mildllewares
 app.get('/',(req,res)=>{
-    res.send('bonjour')
+    res.send('This is my server')
 })
 // app.use(cors(corOptions))
 app.use(express.json());
