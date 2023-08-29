@@ -9,7 +9,7 @@ module.exports=(sequelize, DataTypes )=>{
             autoIncrement: true,
           },
         nom_utilisateur: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.STRING,
         },
         mot_de_passe:{
             type: DataTypes.STRING,

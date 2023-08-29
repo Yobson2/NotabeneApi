@@ -5,7 +5,7 @@ const router= express.Router();
 
 //MES ENDPOINTS
 
-router.post('/registerUsers',userController.addUser);
+router.post('/registerUsers',userController.createUser);
 
 
 module.exports=router
