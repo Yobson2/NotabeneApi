@@ -18,7 +18,7 @@ app.get('/',(req,res)=>{
 // app.use(cors(corOptions))
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
+ 
 app.use('/apiNotabene/v1/',routers)
 
 //listen on port

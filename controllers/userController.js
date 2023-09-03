@@ -1,4 +1,6 @@
 const db= require('../models/index');
+const bcrypt = require('bcryptjs');
+const jwt=require('jsonwebtoken');
 
 //CREATE MAIN MODEL
 
@@ -6,19 +8,33 @@ const Users=db.utilisateur
 
 /// START 
 
+const privateKey="egfdfgvsbkbziudviccujujqcfqcv";
+
 //------ CREATE USER-------------//
 
 const createUser = async (req, res) => {
     try {
         const infoUser = req.body;
         console.log('Data received from client:', infoUser);
+        // Générer un sel sécurisé
+        const salt = await bcrypt.genSalt(10);
 
-        // const newUser = await Users.create(infoUser);
+        // // Hacher le mot de passe
+        const hashedPassword = await bcrypt.hash(req.body.mot_de_passe, salt);
+
+        const newInfos={
+            "nom_utilisateur":req.body.nom_utilisateur,
+            "adresse_email":req.body.adresse_email,
+            "mot_de_passe":hashedPassword
+        };
+
+        console.log('hast infos',newInfos)
+        const newUser = await Users.create(newInfos);
 
         res.status(201).json({
             success: true,
             message: 'User created successfully',
-            // user: newUser
+            user: newUser
         });
     } catch (error) {
         console.error('Error creating user:', error);
@@ -53,15 +69,55 @@ const getAllUsers = async (req, res) => {
 
 
 //------ LOGIN USER-------------//
+const loginUser = async (req, res) => {
+    try {
+        const { adresse_email, mot_de_passe } = req.body;
 
-const loginUser= async (req,res)=>{
-    // id_utilisateur
-    const id=req.params.id
-    let userdata = await Users.findOne({
-        where: {id: id}
-    })
-    res.status(200).send(userdata)
-}
+        // Utilisez la méthode findOne de votre modèle Sequelize
+        const userDoc = await Users.findOne({
+            where: {
+                adresse_email: adresse_email
+            }
+        });
+
+        // Vérifiez si l'utilisateur existe
+        if (!userDoc) {
+            return res.status(404).json({
+                success: false,
+                message: "Utilisateur non trouvé",
+            });
+        }
+
+        // Vous pouvez maintenant accéder aux propriétés de l'utilisateur trouvé
+        console.log('Adresse email de l\'utilisateur :', userDoc.adresse_email,);
+        console.log('data pwd',mot_de_passe);
+
+       const passwordMatch = await bcrypt.compare(mot_de_passe, userDoc.mot_de_passe);
+
+        console.log('test',passwordMatch,userDoc.mot_de_passe);
+        if (passwordMatch) {
+            jwt.sign({ userId: userDoc.id_utilisateur,adresse_email:userDoc.adresse_email}, privateKey, {}, (err, token) => {
+                if (err) {
+                    console.error("Une erreur s'est produite lors de la génération du token", err);
+                    res.status(500).json({
+                        success: false,
+                        message: "Erreur de serveur",
+                        error: err.message
+                    });
+                } else {
+                    res.status(200).json({
+                        success: true,
+                        message: "Connexion réussie",
+                        token:token
+                    });
+                }
+            });
+        } 
+        
+    } catch (error) {
+        console.error("Une erreur s'est produite", error);
+    }
+};
 
 
 //------ UPDATE USER-------------//
