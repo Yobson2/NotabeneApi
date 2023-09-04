@@ -10,6 +10,6 @@ router.post('/loginUsers',userController.loginUser);
 
 
 router.get('/allUsers',userController.getAllUsers);
-router.get('/userByEmail/:email',userController.getUsersByEmail)
+router.get('/userByEmail/:email',userController.getUsersByEmail);
 
 module.exports=router
