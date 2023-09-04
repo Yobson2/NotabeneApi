@@ -67,6 +67,31 @@ const getAllUsers = async (req, res) => {
     }
 };
 
+//------ GET USER BY EMAIL-------------//
+
+const getUsersByEmail = async (req, res) => {
+    const adresse_email = req.params.email;
+    try {
+        const allUsers = await Users.findOne({
+            where: {
+                adresse_email: adresse_email
+            }
+        });
+        res.status(200).json({
+            success: true,
+            message: 'Users retrieved successfully',
+            users: allUsers
+        });
+    } catch (error) {
+        console.error('Error retrieving users:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while retrieving users.',
+            error: error.message
+        });
+    }
+};
+
 
 //------ LOGIN USER-------------//
 const loginUser = async (req, res) => {
@@ -108,7 +133,8 @@ const loginUser = async (req, res) => {
                     res.status(200).json({
                         success: true,
                         message: "Connexion réussie",
-                        token:token
+                        token:token,
+                        data:userDoc,
                     });
                 }
             });
@@ -118,6 +144,23 @@ const loginUser = async (req, res) => {
         console.error("Une erreur s'est produite", error);
     }
 };
+
+
+//------ PROFIL  USER-------------//
+
+
+// const profileUsers= async (req,res)=>{
+
+//     const {token }=req.cookie
+//     jwt.verify(token,privateKey,{},(err,info)=>{
+//         if (err) throw err;
+//         res.json(info)
+//     })
+//     const products = await Users.update(req.body,{
+//         where: {id: id}
+//     })
+//     res.status(200).send(products)
+// }
 
 
 //------ UPDATE USER-------------//
@@ -152,7 +195,8 @@ module.exports={
     getAllUsers,
     loginUser,
     updateUsers,
-    deleteUsers
+    deleteUsers,
+    getUsersByEmail
 }
 
 ////-------END---------///
