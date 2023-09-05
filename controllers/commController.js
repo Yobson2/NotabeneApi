@@ -12,17 +12,14 @@ const Commentaires=db.commentaire
 
 //COMMENTAIRE
 const addCommentaire = async (req, res) => {
-    const {id_photo,contenu_commentaire,nombre_etoiles}=req.body
-    console.log('Mon commentaire',req.body)
 
+    console.log("mes data",req.body.data)
     const newData={
-            "id_photo":req.body.id_photo,
-            "contenu_commentaire":req.body.contenu_commentaire,
-            "nombre_etoiles":req.body.nombre_etoiles,
-            "date_commentaire":req.body.date_creation
-        };
-
-        console.log('data',newData);
+        "id_photo":req.body.data.id_photo,
+        "contenu_commentaire":req.body.data.contenu_commentaire,
+        "nombre_etoiles":req.body.data.nombre_etoiles,
+        "date_commentaire":req.body.data.date_creation
+    }
         try {
             const newComment = await Commentaires.create(newData);
 

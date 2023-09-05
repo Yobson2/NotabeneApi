@@ -1,8 +1,6 @@
-const {sequelize}=require('./index'); 
+const { sequelize } = require('./index');
 
-
-module.exports=(sequelize, DataTypes )=>{
-    
+module.exports = (sequelize, DataTypes) => {
   const localisation = sequelize.define('localisation', {
     id_Localisation: {
       type: DataTypes.INTEGER,
@@ -10,12 +8,12 @@ module.exports=(sequelize, DataTypes )=>{
       autoIncrement: true,
     },
     nombre_partages: {
-      type:DataTypes.INTEGER
+      type: DataTypes.INTEGER,
     },
-      
-    });
+    nom_de_endroit: { 
+      type: DataTypes.STRING, 
+    },
+  });
 
-    return localisation;
+  return localisation;
 }
-
-
