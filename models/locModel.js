@@ -10,8 +10,11 @@ module.exports = (sequelize, DataTypes) => {
     nombre_partages: {
       type: DataTypes.INTEGER,
     },
-    nom_de_endroit: { 
-      type: DataTypes.STRING, 
+    latitude: {
+      type: DataTypes.FLOAT, 
+    },
+    longitude: {
+      type: DataTypes.FLOAT, 
     },
   });
 

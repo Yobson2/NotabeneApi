@@ -5,6 +5,7 @@ const port=8082
 const routersUser=require('./routes/userRouter')
 const routersCommentaires=require('./routes/commRouter')
 const routersPhoto=require('./routes/photoRouter')
+const routersLoc=require('./routes/photoRouter')
 
 //Initialisation du serveur
 const app=express();
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/apiNotabene/v1/',routersUser)
 app.use('/apiNotabene/v1/',routersCommentaires)
 app.use('/apiNotabene/v1/',routersPhoto)
+app.use('/apiNotabene/v1/',routersLoc)
 
 //listen on port
 app.listen(port,()=>{
