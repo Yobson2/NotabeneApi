@@ -113,15 +113,14 @@ const loginUser = async (req, res) => {
             });
         }
 
-        // Vous pouvez maintenant accéder aux propriétés de l'utilisateur trouvé
-        console.log('Adresse email de l\'utilisateur :', userDoc.adresse_email,);
-        console.log('data pwd',mot_de_passe);
+        // // Vous pouvez maintenant accéder aux propriétés de l'utilisateur trouvé
+        // console.log('Adresse email de l\'utilisateur :', userDoc.adresse_email,);
+        // console.log('data pwd',mot_de_passe);
 
        const passwordMatch = await bcrypt.compare(mot_de_passe, userDoc.mot_de_passe);
-
-        console.log('test',passwordMatch,userDoc.mot_de_passe);
+    //    expiresIn: '10s'
         if (passwordMatch) {
-            jwt.sign({ userId: userDoc.id_utilisateur,adresse_email:userDoc.adresse_email}, privateKey, {}, (err, token) => {
+            jwt.sign({ userId: userDoc.id_utilisateur,adresse_email:userDoc.adresse_email}, privateKey, { }, (err, token) => {
                 if (err) {
                     console.error("Une erreur s'est produite lors de la génération du token", err);
                     res.status(500).json({

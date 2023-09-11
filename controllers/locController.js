@@ -6,19 +6,21 @@ const axios = require('axios');
 const Localisation=db.localisation;
 
 const sendPhotoLocalisation = async (req, res) => {
+    console.log('Sending photo',req.body);
+    console.log('tiii',req.params.id)
     const image=req.file.filename
-    const id_utilisateur = req.params.id;
+    const id_utilisateur = parseInt(req.params.id);
 
     const {latitude,longitude}=req.body
 
     try {
         // Créez un nouveau commentaire dans la base de données
-        const nouveauloc = await Photos.create({
+        const nouveauloc = await Localisation.create({
             "latitude": latitude,
            "longitude":longitude
         });
 
-        // Récupération des données
+        // // Récupération des données
         const id_Localisation = nouveauloc.id_Localisation;
         const date_creation = nouveauloc.createdAt;
 
@@ -29,7 +31,7 @@ const sendPhotoLocalisation = async (req, res) => {
             date_creation:date_creation
         };
     
-
+  console.log(data);
 
         // Envoyez les données à un autre endpoint
         await axios.post('http://localhost:8082/apiNotabene/v1/sendPhoto', { data: data });
@@ -40,7 +42,12 @@ const sendPhotoLocalisation = async (req, res) => {
     }
 };
 
+const sendTest = (req, res) => {
+    console.log('Send test',req.body)
+};
+
 
 module.exports = {
-    sendPhotoLocalisation
+    sendPhotoLocalisation,
+    sendTest
 };

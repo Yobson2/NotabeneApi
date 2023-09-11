@@ -8,5 +8,4 @@ const router= express.Router();
 
 router.post('/sendPhotoLocalisation/:id',uploadMiddleware,locController.sendPhotoLocalisation);
 
-
 module.exports=router

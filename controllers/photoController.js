@@ -10,6 +10,8 @@ const addPost = async (req, res) => {
 
     // console.log('image',image)
     const id_utilisateur = req.params.id;
+    console.log('id_utilisateur',id_utilisateur)
+    console.log('ress',req.body)
     const { contenu_commentaire, nom_entreprise, nombre_etoiles } = req.body;
 
     try {
@@ -28,35 +30,61 @@ const addPost = async (req, res) => {
             nombre_etoiles,
             date_creation:date_creation
         };
+        console.log(data1,'test');
     
 
 
-        // Envoyez les données à un autre endpoint
+    //     // Envoyez les données à un autre endpoint
         await axios.post('http://localhost:8082/apiNotabene/v1/addCommentaire', { data: data1 });
         res.status(201).json(nouveauCommentaire);
     } catch (error) {
         console.error('Erreur lors de l\'ajout du commentaire :', error);
-        res.status(500).json({ message: 'Une erreur est survenue lors de l\'ajout du commentaire.' });
+    //     res.status(500).json({ message: 'Une erreur est survenue lors de l\'ajout du commentaire.' });
     }
 };
 const sendPhoto = async (req, res) => {
 
-    console.log('image',req.body);
-
-    // const data={
-    //     id_utilisateur: id_utilisateur,
-    //     image: image,
-    // }
+    console.log('image phoooooto',req.body);
+    const donnees={
+        "id_utilisateur":req.body.data.id_utilisateur,
+        "id_Localisation":req.body.data.id_Localisation,
+        "image":req.body.data.image,
+        "createdAt":req.body.data.date_creation
+    }
 
     try {
+        const newData = await Photos.create(donnees);
+
+        res.status(201).json({
+            success: true,
+            message: 'Successfully received data',
+            PhotoRef: newData
+        });
        
         
     } catch (error) {
+        console.error('Data Receiving Error ----session photo------:', error);
+    }
+}
+
+const getAllPhoto = async (req, res) => {
+
+    console.log('all photo');
+    
+
+    try {
+        let alldata = await Photos.findAll({})
+        console.log(alldata,'photo');
+         res.status(200).send(alldata)
+       
         
+    } catch (error) {
+        console.error('All photo Receiving Error ----session photo------:', error);
     }
 }
 
 module.exports = {
     addPost,
-    sendPhoto
+    sendPhoto,
+    getAllPhoto
 };
