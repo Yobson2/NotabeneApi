@@ -10,6 +10,6 @@ router.post('/addPost/:id',uploadMiddleware,photoController.addPost);
 router.post('/sendPhoto',uploadMiddleware,photoController.sendPhoto);
 
 
-router.get('/getAllPhoto',photoController.getAllPhoto);
+router.get('/getAllPhoto/:id',photoController.getAllPhoto);
 
 module.exports=router

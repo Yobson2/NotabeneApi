@@ -68,20 +68,25 @@ const sendPhoto = async (req, res) => {
 }
 
 const getAllPhoto = async (req, res) => {
-
-    console.log('all photo');
-    
+    const id = req.params.id;
+    console.log('ID reçu :', id);
 
     try {
-        let alldata = await Photos.findAll({})
-        console.log(alldata,'photo');
-         res.status(200).send(alldata)
-       
+        // Utilisez 'where' pour filtrer les résultats en fonction de l'ID
+        let alldata = await Photos.findAll({
+            where: {
+                id_utilisateur: id
+            }
+        });
         
+        console.log(alldata, 'photo');
+        res.status(200).send(alldata);
     } catch (error) {
-        console.error('All photo Receiving Error ----session photo------:', error);
+        console.error('Erreur lors de la récupération des photos :', error);
+        res.status(500).send('Erreur serveur lors de la récupération des photos');
     }
 }
+
 
 module.exports = {
     addPost,
