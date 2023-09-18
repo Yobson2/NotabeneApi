@@ -6,7 +6,7 @@ const storage = multer.diskStorage({
         cb(null, "./uploads");
     },
     filename: function (req, file, cb) {
-        cb(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
+        cb(null, file.originalname); // Utilisation du nom original du fichier
     }
 });
 
@@ -15,14 +15,14 @@ const upload = multer({
 }).single('image'); // image: nom de mon champ de fichier
 
 // Middleware pour gérer l'upload de fichiers
-function uploadMiddleware(req, res, next) {
+function uploadMiddlewareRacine(req, res, next) {
     upload(req, res, function (err) {
         if (err) {
             return res.status(500).json({ error: 'Erreur lors de l\'upload du fichier.' });
         }
-        console.log('Upload')
+        console.log('Upload',res)
         next();
     });
 }
 
-module.exports = uploadMiddleware;
+module.exports = uploadMiddlewareRacine;
