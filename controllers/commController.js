@@ -17,12 +17,13 @@ const addCommentaire = async (req, res) => {
     const newData={
         "id_photo":req.body.data.id_photo,
         "contenu_commentaire":req.body.data.contenu_commentaire,
-        "nombre_etoiles":req.body.data.nombre_etoiles,
+        "nombre_etoiles":req.body.data.nbre_etoiles,
         "date_commentaire":req.body.data.date_creation
     }
         try {
+            console.log('adding commentaire',newData)
             const newComment = await Commentaires.create(newData);
-
+            // const id_commentaire = newComment.id_commentaire;
             res.status(201).json({
                 success: true,
                 message: 'Commentaire created successfully',
@@ -47,4 +48,4 @@ module.exports={
 
 }
 
-////-------END---------///
+////-------END---------///h
