@@ -51,15 +51,16 @@ const addPost = async (req, res) => {
     const id_utilisateur = parseInt(req.params.id);
 
     const {latitude,longitude}=req.body
-
+     
     try {
         // Créez un nouveau commentaire dans la base de données
-        const nouveauloc = await Localisation.create({
-            "latitude": latitude,
-           "longitude":longitude
-        });
+        const nouveauloc ={} 
+        // await Localisation.create({
+        //     "latitude": latitude,
+        //    "longitude":longitude
+        // });
 
-        // // Récupération des données
+        // Récupération des données
         const id_Localisation = nouveauloc.id_Localisation;
         const date_creation = nouveauloc.createdAt;
         const nbre_etoiles=req.body.nombre_etoiles
