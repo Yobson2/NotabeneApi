@@ -67,14 +67,14 @@ const getAllUsers = async (req, res) => {
     }
 };
 
-//------ GET USER BY EMAIL-------------//
+//------ GET USER BY ID-------------//
 
-const getUsersByEmail = async (req, res) => {
-    const adresse_email = req.params.email;
+const getUsersById = async (req, res) => {
+    const id_utilisateur = req.params.id;
     try {
         const allUsers = await Users.findOne({
             where: {
-                adresse_email: adresse_email
+                id_utilisateur: id_utilisateur
             }
         });
         res.status(200).json({
@@ -113,10 +113,6 @@ const loginUser = async (req, res) => {
             });
         }
 
-        // // Vous pouvez maintenant accéder aux propriétés de l'utilisateur trouvé
-        // console.log('Adresse email de l\'utilisateur :', userDoc.adresse_email,);
-        // console.log('data pwd',mot_de_passe);
-
        const passwordMatch = await bcrypt.compare(mot_de_passe, userDoc.mot_de_passe);
     //    expiresIn: '10s'
         if (passwordMatch) {
@@ -145,25 +141,7 @@ const loginUser = async (req, res) => {
 };
 
 
-//------ PROFIL  USER-------------//
-
-
-// const profileUsers= async (req,res)=>{
-
-//     const {token }=req.cookie
-//     jwt.verify(token,privateKey,{},(err,info)=>{
-//         if (err) throw err;
-//         res.json(info)
-//     })
-//     const products = await Users.update(req.body,{
-//         where: {id: id}
-//     })
-//     res.status(200).send(products)
-// }
-
-
 //------ UPDATE USER-------------//
-
 
 const updateUsers= async (req,res)=>{
 
@@ -195,7 +173,7 @@ module.exports={
     loginUser,
     updateUsers,
     deleteUsers,
-    getUsersByEmail
+    getUsersById
 }
 
 ////-------END---------///

@@ -13,6 +13,7 @@ const app=express();
 
 // Définir le dossier contenant les images
 const mesImages = path.join(__dirname, 'uploads');
+const allImagesProfil = path.join(__dirname, 'uploadsProfil');
 
 
 //mildllewares
@@ -20,12 +21,13 @@ app.get('/',(req,res)=>{
     res.send('This is my server')
 })
 
+
 app.use('/images', express.static(mesImages));
-// app.use(cors(corOptions))
+app.use('/imagesProfil', express.static(allImagesProfil));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-console.log('mes images');
  
 app.use('/apiNotabene/v1/',routersUser)
 app.use('/apiNotabene/v1/',routersCommentaires)
