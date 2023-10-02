@@ -10,12 +10,13 @@ const sendPhoto = async (req, res) => {
     const donnees={
         "id_utilisateur":req.body.data.id_utilisateur,
         "id_Localisation":req.body.data.id_Localisation,
-        "image":req.body.data.image,
+        "image":req.body.data.photos,
         "createdAt":req.body.data.date_creation
     }
+    console.log('sendPhoto', donnees)
     const newData = await Photos.create(donnees);
     try {
-        const id_photo=newData.id_photos;
+        const id_photo=newData.id_photo;
         const contenu_commentaire=req.body.data.contenu_commentaire
         const date_creation=req.body.data.date_creation
         const nbre_etoiles=req.body.data.nbre_etoiles
@@ -39,22 +40,7 @@ const sendPhoto = async (req, res) => {
 }
 
 const getAllPhoto = async (req, res) => {
-    const id = req.params.id;
-    console.log('ID reçu :', id);
-
-    try {
-        let alldata = await Photos.findAll({
-            where: {
-                id_utilisateur: id
-            }
-        });
-        
-        console.log(alldata, 'photo');
-        res.status(200).send(alldata);
-    } catch (error) {
-        console.error('Erreur lors de la récupération des photos :', error);
-        res.status(500).send('Erreur serveur lors de la récupération des photos');
-    }
+    
 }
 
 

@@ -1,8 +1,8 @@
 const { sequelize } = require('./index');
 
 module.exports = (sequelize, DataTypes) => {
-  const photos = sequelize.define('photos', {
-    id_photo: {
+  const galerie = sequelize.define('galerie', {
+    id_photo_galerie: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
@@ -14,18 +14,10 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id_utilisateur',
       },
     },
-    id_Localisation: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: 'localisations',
-        key: 'id_Localisation',
-      },
-    },
-    image: {
-      type: DataTypes.JSON,
-      allowNull: false,
+    photosName: {
+      type: DataTypes.STRING,
     },
   });
 
-  return photos;
+  return galerie;
 };

@@ -7,9 +7,6 @@ const Commentaires=db.commentaire
 
 /// START 
 
-
-
-
 //COMMENTAIRE
 const addCommentaire = async (req, res) => {
 
@@ -38,10 +35,6 @@ const addCommentaire = async (req, res) => {
             }); 
         }
 }
-
-
-
-
 
 module.exports={
     addCommentaire,

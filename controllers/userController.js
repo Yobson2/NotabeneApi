@@ -146,10 +146,10 @@ const loginUser = async (req, res) => {
 const updateUsers= async (req,res)=>{
 
     let id=req.params.id  
-    const products = await Users.update(req.body,{
-        where: {id: id}
+    const users = await Users.update(req.body,{
+        where: {id_utilisateur: id}
     })
-    res.status(200).send(products)
+    res.status(200).send(users)
 }
 
 
@@ -159,9 +159,9 @@ const deleteUsers= async (req,res)=>{
 
     let id=req.params.id
     await Users.destroy({
-        where: {id: id}
+        where: {id_utilisateur: id}
     })
-    res.status(200).send("Product is deleted !")
+    res.status(200).send("User is deleted !")
 }
 
 

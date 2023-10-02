@@ -20,9 +20,11 @@ function uploadMiddleware(req, res, next) {
         if (err) {
             return res.status(500).json({ error: 'Erreur lors de l\'upload du fichier.' });
         }
-        console.log('Upload')
         next();
     });
 }
 
 module.exports = uploadMiddleware;
+
+
+

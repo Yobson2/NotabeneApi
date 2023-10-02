@@ -38,6 +38,7 @@ sequelize.authenticate()
   db.photos=require('./photoModel.js')(sequelize,DataTypes);
   db.entreprise=require('./entrepriseModel.js')(sequelize,DataTypes);
   db.etsComm=require('./entCommModel.js')(sequelize,DataTypes);
+  db.galerie=require('./galerieModel.js')(sequelize,DataTypes);
 
 //Synchronisation des modèles avec la base de données
   db.sequelize.sync({force: false})
