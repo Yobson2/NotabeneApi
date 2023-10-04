@@ -7,6 +7,6 @@ const router= express.Router();
 
 //MES ENDPOINTS
 
-router.post('/addPost/:id',extractFilenames,locController.addPost);
+router.post('/addPost/:id',uploadMiddleware,locController.addPost);
 
 module.exports=router

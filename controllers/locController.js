@@ -9,17 +9,16 @@ const Localisation=db.localisation;
 //Pour le commentaire
 const addPost = async (req, res) => {
     console.log('commentaire user', req.body);
-    const id_utilisateur = parseInt(req.params.id);
-    const photoData = [...req.photoData];
-    console.log('Route POST avec les noms de fichiers : ' + photoData)
+    // const id_utilisateur = parseInt(req.params.id);
+
 
     const {latitude,longitude}=req.body
      
     try {
         // Créez un nouveau commentaire dans la base de données
         const nouveauloc = await Localisation.create({
-            "latitude": latitude,
-            "longitude": longitude
+            // "latitude": latitude,
+            // "longitude": longitude
         });
         
 
