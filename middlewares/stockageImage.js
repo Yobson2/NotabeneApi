@@ -3,7 +3,7 @@ const multer = require('multer');
 // Configuration de l'upload d'image (dossier de destination)
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, "./uploads");
+        cb(null, "./uploadsProfil");
     },
     filename: function (req, file, cb) {
         cb(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage: storage
-}).single('image'); // image: nom de mon champ de fichier
+}).single('image'); 
 
 // Middleware pour gérer l'upload de fichiers
 function uploadMiddleware(req, res, next) {
@@ -20,11 +20,9 @@ function uploadMiddleware(req, res, next) {
         if (err) {
             return res.status(500).json({ error: 'Erreur lors de l\'upload du fichier.' });
         }
+        console.log('Upload')
         next();
     });
 }
 
 module.exports = uploadMiddleware;
-
-
-
