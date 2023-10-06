@@ -6,14 +6,14 @@ const axios = require('axios');
 const Photos = db.photos;
 
 const sendPhoto = async (req, res) => {
-
+  console.log('Sending photo tetetet',req.body);
     const donnees={
         "id_utilisateur":req.body.data.id_utilisateur,
         "id_Localisation":req.body.data.id_Localisation,
         "image":req.body.data.photos,
         "createdAt":req.body.data.date_creation
     }
-    console.log('sendPhoto', donnees)
+    // console.log('sendPhoto', donnees)
     const newData = await Photos.create(donnees);
     try {
         const id_photo=newData.id_photo;

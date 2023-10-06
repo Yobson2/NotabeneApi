@@ -6,6 +6,6 @@ const router= express.Router();
 
 //MES ENDPOINTS
 
-router.post('/addPost/:id',multiPhoto,[],locController.addPost);
+router.post('/addPost/:id',multiPhoto,locController.addPost);
 
 module.exports=router

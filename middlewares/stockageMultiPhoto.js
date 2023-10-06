@@ -1,4 +1,5 @@
 const multer = require('multer');
+let savedFiles = [];
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -12,14 +13,14 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 async function saveFiles(files) {
-    let savedFiles = [];
-
+  
     await Promise.all(files.map(async (file) => {
         const filename = file.fieldname + "_" + Date.now() + "_" + file.originalname;
         savedFiles.push(filename);
     }));
     return savedFiles;
 }
+
 
 function uploadMiddlewareMultiPhoto(req, res, next) {
     upload.array('images')(req, res, async function (err) {
@@ -28,15 +29,17 @@ function uploadMiddlewareMultiPhoto(req, res, next) {
         }
 
         try {
+            const updatedFiles = await saveFiles(req.files); 
+            console.log(updatedFiles, 'updated files');
+            reqs.savedFiles = updatedFiles;
             
-            const savedFiles = await saveFiles(req.files);
-            console.log('Fichiers enregistrés:', savedFiles);
-            req.savedFiles = [...savedFiles];
+            // Vider le tableau savedFiles
+            // savedFiles = [];
+
             next();
         } catch (error) {
             return res.status(500).json({ error: error.message });
         }
     });
 }
-
 module.exports = uploadMiddlewareMultiPhoto;
