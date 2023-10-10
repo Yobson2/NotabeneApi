@@ -8,6 +8,7 @@ const routersCommentaires=require('./routes/commRouter')
 const routersPhoto=require('./routes/photoRouter')
 const routersLoc=require('./routes/locRouter')
 
+
 //Initialisation du serveur
 const app=express();
 

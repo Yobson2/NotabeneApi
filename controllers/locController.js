@@ -1,60 +1,59 @@
+const { text } = require('express');
 const db = require('../models/index');
+const Localisation = db.localisation;
 const axios = require('axios');
 
-// CREATE MAIN MODEL
+const savedFiles = new Set();
 
-const Localisation=db.localisation;
+async function saveFiles(files) {
+    files.forEach(file => {
+        let fileName = file.fieldname + "_" + Date.now() + "_" + file.originalname;
+        savedFiles.add(fileName);
+    });
 
+    return Array.from(savedFiles); // Convertit le Set en tableau pour la sortie
+}
 
-// //Pour le commentaire
 const addPost = async (req, res) => {
-    console.log('resultated1',req.savedFiles)
-    const id_utilisateur = parseInt(req.params.id);
-    console.log('id_utilisateur',id_utilisateur);
-//     const latitude=req.body.latitude_
-//     const longitude=req.body.longitude_
-//     // let images=[];
-//     const images = req.savedFiles;
-//     try {
-//         // Créez un nouveau commentaire dans la base de données
+    try {
+        const id_utilisateur = parseInt(req.params.id);
+        console.log('id_utilisateur', id_utilisateur);
+        const latitude = req.body.latitude_;
+        const longitude = req.body.longitude_;
 
-//         console.log('coordonnées',longitude,latitude)
-//         const nouveauloc = await Localisation.create({
-//             // "latitude": latitude,
-//             // "longitude": longitude
-//         });
-        
-//         if (!req.files || !req.files.length) {
-//             return res.status(400).json({ message: 'Aucun fichier n\'a été téléchargé.' });
-//         }
-//         // req.savedFiles.forEach(filename => {
-//         //     console.log('Nom du fichier enregistré 333 :', filename);
-//         //     images.push(filename);
-//         // });
-//         // Récupération des données
-//         const id_Localisation = nouveauloc.id_Localisation;
-//         const date_creation = nouveauloc.createdAt;
-//         const nbre_etoiles=req.body.nombre_etoiles
+        // Enregistrez la localisation dans votre base de données
+        // const nouveauloc = await Localisation.create({
+        //     // "latitude": latitude,
+        //     // "longitude": longitude
+        // });
+
+        // console.log('nouveauloc', nouveauloc);
+
+        const updatedFiles = await saveFiles(req.files);
+        console.log(updatedFiles, 'updated files');
+        // Nettoyez savedFiles pour la prochaine requête
+         savedFiles.clear();
+
        
-//         // const data = {
-//         //     id_utilisateur: id_utilisateur, 
-//         //     id_Localisation:id_Localisation,
-//         //     photos:"tttttest",
-//         //     date_creation:date_creation,
-//         //     contenu_commentaire:req.body.contenu_commentaire,
-//         //     nbre_etoiles:parseFloat(nbre_etoiles)
-//         // };
-//         //  console.log('mes données teststtst-------',data.id_Localisation,"-------");
-//         // Envoyez les données à un autre endpoint
-//         // await axios.post('http://localhost:8082/apiNotabene/v1/sendPhoto', { data: data });
-//         res.status(201).json(nouveauloc);
-//     } catch (error) {
-//         console.error('Erreur lors de l\'ajout du commentaire :', error);
-//         res.status(500).json({ message: 'Une erreur est survenue lors de l\'ajout du photo et autres.' });
-//     }
+
+        // Envoi des données à une autre URL avec Axios
+        // const otherEndpoint = 'http://localhost:8082/apiNotabene/v1/sendPhoto'; 
+        // const response = await axios.post(otherEndpoint, { images: images });
+
+        // console.log(response.data);
+
+        res.status(200).json({ message: 'Images enregistrées avec succès.' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
+const test = async (req, res, next) => {
+ console.log("dddd");
+};
 
+test()
 module.exports = {
-    addPost
+    addPost,
+    test
 };
