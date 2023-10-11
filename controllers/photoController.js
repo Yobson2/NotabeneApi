@@ -1,51 +1,46 @@
 const db = require('../models/index');
 const axios = require('axios');
 
-// CREATE MAIN MODEL
-
 const Photos = db.photos;
 
 const sendPhoto = async (req, res) => {
-  console.log('Sending photo tetetet',req.body.images);
-    // const donnees={
-    //     "id_utilisateur":req.body.data.id_utilisateur,
-    //     "id_Localisation":req.body.data.id_Localisation,
-    //     "image":req.body.data.photos,
-    //     "createdAt":req.body.data.date_creation
-    // }
-    // console.log('sendPhoto', donnees)
-    // const newData = await Photos.create(donnees);
-    // const newData = []
-    // try {
-    //     const id_photo=newData.id_photo;
-    //     const contenu_commentaire=req.body.data.contenu_commentaire
-    //     const date_creation=req.body.data.date_creation
-    //     const nbre_etoiles=req.body.data.nbre_etoiles
+  try {
+    const { id_utilisateur, id_Localisation, images, date_creation, contenu_commentaire,nombre_etoiles } = req.body.data;
 
-    //     const data={
-    //         id_photo:id_photo,
-    //         contenu_commentaire:contenu_commentaire,
-    //         date_creation:date_creation,
-    //         nbre_etoiles:nbre_etoiles
-    //     }
+    const newData = await Photos.create({
+      id_utilisateur,
+      id_Localisation,
+      image: images,
+      createdAt: date_creation
+    });
 
-    //     await axios.post('http://localhost:8082/apiNotabene/v1/addCommentaire', { data: data });
-        // res.status(201).json({
-        //     success: true,
-        //     message: 'Successfully received data',
-        //     PhotoRef: newData
-        // });
-    // } catch (error) {
-    //     console.error('Data Receiving Error ----session photo------:', error);
-    // }
+    const id_photo = newData.id_photo;
+
+    const data = {
+      id_photo,
+      contenu_commentaire,
+      date_creation,
+      nombre_etoiles: parseInt( nombre_etoiles)
+    };
+
+    await axios.post('http://localhost:8082/apiNotabene/v1/addCommentaire', { data });
+
+    res.status(201).json({
+      success: true,
+      message: 'Successfully received data',
+      PhotoRef: newData
+    });
+  } catch (error) {
+    console.error('Data Receiving Error ----session photo------:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 }
 
 const getAllPhoto = async (req, res) => {
-    
+  
 }
 
-
 module.exports = {
-    sendPhoto,
-    getAllPhoto
+  sendPhoto,
+  getAllPhoto
 };
