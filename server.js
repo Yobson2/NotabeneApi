@@ -7,6 +7,8 @@ const routersUser=require('./routes/userRouter')
 const routersCommentaires=require('./routes/commRouter')
 const routersPhoto=require('./routes/photoRouter')
 const routersLoc=require('./routes/locRouter')
+const routersEntreprise=require('./routes/entrepriseRouter')
+const routersEts=require('./routes/entCommRouter')
 
 
 //Initialisation du serveur
@@ -34,6 +36,10 @@ app.use('/apiNotabene/v1/',routersUser)
 app.use('/apiNotabene/v1/',routersCommentaires)
 app.use('/apiNotabene/v1/',routersPhoto)
 app.use('/apiNotabene/v1/',routersLoc)
+app.use('/apiNotabene/v1/',routersEntreprise)
+app.use('/apiNotabene/v1/',routersEts)
+
+
 
 //listen on port
 app.listen(port,()=>{

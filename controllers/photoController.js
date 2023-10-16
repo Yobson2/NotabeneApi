@@ -4,8 +4,10 @@ const axios = require('axios');
 const Photos = db.photos;
 
 const sendPhoto = async (req, res) => {
+ 
+  // console.log("Sending photo to " + req.body);
   try {
-    const { id_utilisateur, id_Localisation, images, date_creation, contenu_commentaire,nombre_etoiles } = req.body.data;
+    const { id_utilisateur, id_Localisation, images, date_creation, contenu_commentaire,nombre_etoiles,categorie,nom_entreprise,addresse_entreprise } = req.body.data;
 
     const newData = await Photos.create({
       id_utilisateur,
@@ -20,7 +22,11 @@ const sendPhoto = async (req, res) => {
       id_photo,
       contenu_commentaire,
       date_creation,
-      nombre_etoiles: parseInt( nombre_etoiles)
+      nombre_etoiles: parseInt( nombre_etoiles),
+      categorie,
+      nom_entreprise,
+      addresse_entreprise,
+      id_Localisation,
     };
 
     await axios.post('http://localhost:8082/apiNotabene/v1/addCommentaire', { data });
