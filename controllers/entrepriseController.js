@@ -36,6 +36,32 @@ const addEntreprise = async (req, res) => {
     }
 }
 
+//------ GET USER BY ID-------------//
+
+const getEntreprisByCategorie = async (req, res) => {
+    const categorie = req.params.categorie;
+    try {
+        const allEntreprise = await Entreprise.findOne({
+            where: {
+                categories: categorie
+            }
+        });
+        res.status(200).json({
+            success: true,
+            message: 'Entreprise by categorie retrieved successfully',
+            allEntreprises: allEntreprise
+        });
+    } catch (error) {
+        console.error('Error retrieving Entreprise by categorie:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while retrieving Entreprise by categorie.',
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
-    addEntreprise
+    addEntreprise,
+    getEntreprisByCategorie
 };
