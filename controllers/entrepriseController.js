@@ -41,7 +41,7 @@ const addEntreprise = async (req, res) => {
 const getEntreprisByCategorie = async (req, res) => {
     const categorie = req.params.categorie;
     try {
-        const allEntreprise = await Entreprise.findOne({
+        const allEntreprise = await Entreprise.findAll({
             where: {
                 categories: categorie
             }

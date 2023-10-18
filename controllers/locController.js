@@ -16,31 +16,31 @@ async function saveFiles(files) {
 const addPost = async (req, res) => {
     try {
         console.log('Saving post', req.body)
-        // const id_utilisateur = parseInt(req.params.id);
-        // const { latitude_, longitude_, contenu_commentaire, nom_entreprise, addresse_entreprise, nombre_etoiles,categorie } = req.body;
+        const id_utilisateur = parseInt(req.params.id);
+        const { latitude_, longitude_, contenu_commentaire, nom_entreprise, addresse_entreprise, nombre_etoiles,categorie } = req.body;
 
-        // // Enregistrez la localisation dans votre base de données
-        // const nouveauloc = await Localisation.create({ latitude: latitude_, longitude: longitude_ });
+        // Enregistrez la localisation dans votre base de données
+        const nouveauloc = await Localisation.create({ latitude: latitude_, longitude: longitude_ });
         
-        // const images = await saveFiles(req.files);
-        // const id_Localisation = nouveauloc.id_Localisation;
-        // const  date_creation= nouveauloc.createdAt;
+        const images = await saveFiles(req.files);
+        const id_Localisation = nouveauloc.id_Localisation;
+        const  date_creation= nouveauloc.createdAt;
         
-        // const data = {
-        //     id_Localisation,
-        //     id_utilisateur,
-        //     images,
-        //     contenu_commentaire,
-        //     nom_entreprise,
-        //     addresse_entreprise,
-        //     nombre_etoiles,
-        //     date_creation,
-        //     categorie
-        // }
+        const data = {
+            id_Localisation,
+            id_utilisateur,
+            images,
+            contenu_commentaire,
+            nom_entreprise,
+            addresse_entreprise,
+            nombre_etoiles,
+            date_creation,
+            categorie
+        }
 
-        // // Envoi des données à une autre URL avec Axios
-        // const otherEndpoint = 'http://localhost:8082/apiNotabene/v1/sendPhoto'; 
-        // const response = await axios.post(otherEndpoint, { data });
+        // Envoi des données à une autre URL avec Axios
+        const otherEndpoint = 'http://localhost:8082/apiNotabene/v1/sendPhoto'; 
+        const response = await axios.post(otherEndpoint, { data });
 
         res.status(200).json({ message: 'Images enregistrées avec succès.' });
     } catch (error) {
