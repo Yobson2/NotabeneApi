@@ -42,6 +42,11 @@ const addCommentaire = async (req, res) => {
     }
 }
 
+const allCommentaire = async (req, res) => {
+
+};
+
 module.exports = {
-    addCommentaire
+    addCommentaire,
+    allCommentaire
 };

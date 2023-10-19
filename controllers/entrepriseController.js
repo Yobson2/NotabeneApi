@@ -61,7 +61,26 @@ const getEntreprisByCategorie = async (req, res) => {
     }
 };
 
+const getEntreprises = async (req, res) => {
+    try {
+        const allEntreprise = await Entreprise.findAll({});
+        res.status(200).json({
+            success: true,
+            message: 'Entreprise retrieved successfully',
+            allEntreprises: allEntreprise
+        });
+    } catch (error) {
+        console.error('Error retrieving Entreprise :', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while retrieving Entreprise .',
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     addEntreprise,
-    getEntreprisByCategorie
+    getEntreprisByCategorie,
+    getEntreprises
 };
