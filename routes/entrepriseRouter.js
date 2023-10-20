@@ -8,5 +8,6 @@ const router= express.Router();
 router.post('/addEntreprise',entrepriseController.addEntreprise);
 router.get('/getAllEntreprise/:categorie',entrepriseController.getEntreprisByCategorie);
 router.get('/getAllEntreprise',entrepriseController.getEntreprises);
+router.get('/getItems',entrepriseController.getEntreprisesByServer);
 
 module.exports=router

@@ -26,6 +26,28 @@ const addEtsComm = async (req, res) => {
     }
 }
 
+const getEtsComm = async (req, res) => {
+    // getItems
+    try {
+        const allEntreprise = await EtsComm.findAll({});
+        const mesData = allEntreprise.map(item => {
+            return {
+                id_entreprise: item.id_ets_com,
+                id_commentaire: item.id_commentaire
+            };
+        });
+        res.status(200).json(mesData);
+    } catch (error) {
+        console.error('Error retrieving Entreprise :', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while retrieving Entreprise .',
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
-    addEtsComm
+    addEtsComm,
+    getEtsComm
 };

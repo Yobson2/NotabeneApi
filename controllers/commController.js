@@ -44,12 +44,16 @@ const addCommentaire = async (req, res) => {
 const allCommentaire = async (req, res) => {
     try {
         // Récupération de tous les commentaires
-        const [commentaires, resultUser, resultPhoto] = await Promise.all([
+        const [commentaires, resultUser, resultPhoto,resultEntreprise] = await Promise.all([
             Commentaires.findAll({}),
             axios.get('http://localhost:8082/apiNotabene/v1/allUsers'),
-            axios.get('http://localhost:8082/apiNotabene/v1/getAllPhoto')
+            axios.get('http://localhost:8082/apiNotabene/v1/getAllPhoto'),
+            axios.get('http://localhost:8082/apiNotabene/v1/getItems')
+            
         ]);
 
+
+        // console.log('--------------------------------', resultEntreprise.data);
         // Extraction des IDs des utilisateurs
         const idsUtilisateurs = new Set(resultUser.data.map(user => user.id_utilisateur));
 
@@ -89,7 +93,8 @@ const allCommentaire = async (req, res) => {
                     date_commentaire: commentaire.dataValues.date_commentaire,
                     nombre_etoiles: commentaire.dataValues.nombre_etoiles,
                     createdAt: commentaire.dataValues.createdAt,
-                }))
+                })),
+                entreprise:resultEntreprise.data
             };
         });
 
