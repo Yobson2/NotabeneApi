@@ -1,6 +1,7 @@
 const db= require('../models/index');
 const bcrypt = require('bcryptjs');
 const jwt=require('jsonwebtoken');
+const axios = require('axios');
 
 //CREATE MAIN MODEL
 
@@ -48,24 +49,29 @@ const createUser = async (req, res) => {
 
 
 //------ GET ALL USERS-------------//
-
 const getAllUsers = async (req, res) => {
     try {
         const allUsers = await Users.findAll({});
-        res.status(200).json({
-            success: true,
-            message: 'Users retrieved successfully',
-            users: allUsers
+
+        const userData = allUsers.map(user => {
+            return {
+                id_utilisateur: user.id_utilisateur,
+                nom_utilisateur: user.nom_utilisateur,
+                photo_user: user.photo_user
+            };
         });
+        res.status(200).json(userData);
+
     } catch (error) {
-        console.error('Error retrieving users:', error);
+        console.error('Erreur lors de la récupération des utilisateurs :', error);
         res.status(500).json({
             success: false,
-            message: 'An error occurred while retrieving users.',
+            message: 'Une erreur s\'est produite lors de la récupération des utilisateurs.',
             error: error.message
         });
     }
 };
+
 
 //------ GET USER BY ID-------------//
 

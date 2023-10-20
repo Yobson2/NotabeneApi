@@ -5,6 +5,6 @@ const router= express.Router();
 //MES ENDPOINTS
 
 router.post('/sendPhoto',photoController.sendPhoto);
-router.get('/getAllPhoto/:id',photoController.getAllPhoto);
+router.get('/getAllPhoto',photoController.getAllPhoto);
 
 module.exports=router

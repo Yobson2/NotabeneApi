@@ -43,7 +43,25 @@ const sendPhoto = async (req, res) => {
 }
 
 const getAllPhoto = async (req, res) => {
-  
+  try {
+    const allPhotos = await Photos.findAll({});
+
+    const photoData = allPhotos.map(item => {
+      return {
+          id_photo: item.id_photo,
+          id_utilisateur: item.id_utilisateur
+      };
+  });
+  res.status(200).json(photoData);
+   
+} catch (error) {
+    console.error('Error retrieving Photos:', error);
+    res.status(500).json({
+        success: false,
+        message: 'An error occurred while retrieving Photos.',
+        error: error.message
+    });
+}
 }
 
 module.exports = {
