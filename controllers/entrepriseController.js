@@ -64,6 +64,8 @@ const getEntreprisByCategorie = async (req, res) => {
 const getEntreprises = async (req, res) => {
     try {
         const allEntreprise = await Entreprise.findAll({});
+
+        // console.log('mes données',allEntreprise);
         res.status(200).json({
             success: true,
             message: 'Entreprise retrieved successfully',
@@ -88,7 +90,6 @@ const getEntreprisesByServer = async (req, res) => {
         // Mapper les données pour n'inclure que les champs nécessaires et les regrouper
         const groupedData = allEntreprise.map(item => {
             const matchingEntreprise = resultEtsComm.data.find(entreprise => entreprise.id_entreprise === item.id_entreprise);
-            console.log('test_entreprise',matchingEntreprise)
             return {
                 id_entreprise: item.id_entreprise,
                 id_commentaire: matchingEntreprise ? matchingEntreprise.id_commentaire : null,

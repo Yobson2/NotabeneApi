@@ -43,44 +43,34 @@ const addCommentaire = async (req, res) => {
 }
 const allCommentaire = async (req, res) => {
     try {
-        // Récupération de tous les commentaires
-        const [commentaires, resultUser, resultPhoto,resultEntreprise] = await Promise.all([
+        // Récupération des données depuis différentes sources en parallèle
+        const [commentaires, resultUser, resultPhoto, resultEntreprise] = await Promise.all([
             Commentaires.findAll({}),
             axios.get('http://localhost:8082/apiNotabene/v1/allUsers'),
             axios.get('http://localhost:8082/apiNotabene/v1/getAllPhoto'),
             axios.get('http://localhost:8082/apiNotabene/v1/getItems')
-            
         ]);
 
-
-        // console.log('--------------------------------', resultEntreprise.data);
-        // Extraction des IDs des utilisateurs
+        // Création d'un ensemble d'IDs d'utilisateurs pour une recherche plus efficace
         const idsUtilisateurs = new Set(resultUser.data.map(user => user.id_utilisateur));
 
-        // Initialisation d'un objet pour stocker les photos associées à chaque utilisateur
-        const utilisateursAvecPhotos = {};
-
-        // Remplissage de l'objet avec les photos associées à chaque utilisateur
-        resultPhoto.data.forEach(photo => {
-            if (!utilisateursAvecPhotos[photo.id_utilisateur]) {
-                utilisateursAvecPhotos[photo.id_utilisateur] = [];
-            }
-            utilisateursAvecPhotos[photo.id_utilisateur].push(photo.id_photo);
-        });
+        // Création d'un objet pour stocker les photos associées à chaque utilisateur
+        const utilisateursAvecPhotos = resultPhoto.data.reduce((acc, photo) => {
+            const { id_utilisateur, id_photo } = photo;
+            acc[id_utilisateur] = acc[id_utilisateur] || [];
+            acc[id_utilisateur].push(id_photo);
+            return acc;
+        }, {});
 
         // Filtrage des utilisateurs qui ont au moins une photo
         const utilisateursAvecPhotosFiltres = Object.keys(utilisateursAvecPhotos).filter(id => idsUtilisateurs.has(Number(id)));
 
-        // Génération des données communes
+        // Génération des données finales
         const donneesCommunes = utilisateursAvecPhotosFiltres.map(id => {
             const user = resultUser.data.find(user => user.id_utilisateur === Number(id));
             const photos = utilisateursAvecPhotos[id];
-
-            // Filtrage des commentaires correspondant à l'utilisateur
-            const userCommentaires = commentaires.filter(commentaire =>
-                photos.includes(commentaire.dataValues.id_photo)
-            );
-
+            const userCommentaires = filterCommentaires(commentaires, photos);
+            
             return {
                 id_utilisateur: user.id_utilisateur,
                 nom_utilisateur: user.nom_utilisateur,
@@ -93,8 +83,10 @@ const allCommentaire = async (req, res) => {
                     date_commentaire: commentaire.dataValues.date_commentaire,
                     nombre_etoiles: commentaire.dataValues.nombre_etoiles,
                     createdAt: commentaire.dataValues.createdAt,
+                    entreprise: resultEntreprise.data.find(entreprise =>
+                        entreprise.id_commentaire === commentaire.dataValues.id_commentaire
+                    )
                 })),
-                entreprise:resultEntreprise.data
             };
         });
 
@@ -114,6 +106,14 @@ const allCommentaire = async (req, res) => {
         });
     }
 };
+
+// Fonction pour filtrer les commentaires en fonction des photos
+function filterCommentaires(commentaires, photos) {
+    return commentaires.filter(commentaire =>
+        photos.includes(commentaire.dataValues.id_photo)
+    );
+}
+
 
 
 
