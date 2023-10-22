@@ -42,6 +42,10 @@ const addCommentaire = async (req, res) => {
     }
 }
 const allCommentaire = async (req, res) => {
+    const dataFinal=[]
+    const idEntreprise=req.params.idEntreprise;
+
+    console.log('Creating', idEntreprise)
     try {
         // Récupération des données depuis différentes sources en parallèle
         const [commentaires, resultUser, resultPhoto, resultEntreprise] = await Promise.all([
@@ -72,11 +76,11 @@ const allCommentaire = async (req, res) => {
             const userCommentaires = filterCommentaires(commentaires, photos);
             
             return {
-                id_utilisateur: user.id_utilisateur,
-                nom_utilisateur: user.nom_utilisateur,
-                photo_user: user.photo_user,
-                id_photos: photos,
                 commentaires: userCommentaires.map(commentaire => ({
+                    id_utilisateur: user.id_utilisateur,
+                    nom_utilisateur: user.nom_utilisateur,
+                    photo_user: user.photo_user,
+                    // id_photos: photos,
                     id_commentaire: commentaire.dataValues.id_commentaire,
                     id_photo: commentaire.dataValues.id_photo,
                     contenu_commentaire: commentaire.dataValues.contenu_commentaire,
@@ -89,12 +93,22 @@ const allCommentaire = async (req, res) => {
                 })),
             };
         });
+       
+       donneesCommunes.forEach((element, outerIndex) => {
+                element.commentaires.forEach((commentaire, innerIndex) => {
+                   
+                    if(idEntreprise==commentaire.entreprise.id_entreprise){
+                        dataFinal.push(commentaire)
+                    }
+                });
+            });
 
+        console.log(dataFinal)
         // Envoi de la réponse JSON avec les données générées
         res.status(200).json({
             success: true,
             message: 'Commentaires récupérés avec succès',
-            utilisateursAvecCommentaires: donneesCommunes
+            utilisateursAvecCommentaires: dataFinal
         });
     } catch (error) {
         // Gestion des erreurs
