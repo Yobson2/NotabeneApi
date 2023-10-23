@@ -5,26 +5,35 @@ const axios = require('axios');
 
 const addEntreprise = async (req, res) => {
     try {
-        const { nom_entreprise,addresse_entreprise, id_commentaire, id_Localisation,categorie } = req.body.data;
+        // console.log('Adding entreprise', req.body.data)
+        const { nom_entreprise,addresse_entreprise, id_commentaire, id_Localisation,categorie,id_entreprise } = req.body.data;
 
-        // console.log('Adding Entreprise', req.body);
+     const allData = await Entreprise.findAll({});
+       // Vérifiez si une correspondance est trouvée
+       const matchFound = allData.some(item => id_entreprise === item.id_entreprise); 
+       let id_compagny;
 
-        const newEntreprise = await Entreprise.create({
-            "nom_entreprise":nom_entreprise,
-            "adresse_entreprise":addresse_entreprise,
-             "id_Localisation":  id_Localisation,
-             "categories":categorie
-        });
-        const id_entreprise = newEntreprise.id_entreprise ;
+       if (matchFound) {
+        id_compagny=id_entreprise
+       }else{
+            const newEntreprise = await Entreprise.create({
+                "nom_entreprise":nom_entreprise,
+                "adresse_entreprise":addresse_entreprise,
+                "id_Localisation":  id_Localisation,
+                "categories":categorie
+            });
+            id_compagny=newEntreprise.id_entreprise
+       }
+    
         const data={
             id_commentaire,
-            id_entreprise   
+            id_compagny,  
         }
       await axios.post('http://localhost:8082/apiNotabene/v1/addEts', { data });
         res.status(201).json({
             success: true,
             message: 'Entreprise created successfully',
-            user: newEntreprise
+            user: "Ok entreprises created",
         });
     } catch (error) {
         console.error('Error creating entreprise:', error);
@@ -117,6 +126,7 @@ const getEntreprisesMoreInfos = async (req, res) => {
         const mesData = allEntreprise.map(item => {
             const matchingEntreprise = mesLocalisations.data["AllLocalisations"].find(loc => loc.id_Localisation === item.id_Localisation);
             return {
+                id_localisation:item.id_Localisation,
                 id_entreprise: item.id_entreprise,
                 nom_entreprise: item.nom_entreprise,
                 adresse_entreprise: item.adresse_entreprise,

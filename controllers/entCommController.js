@@ -4,11 +4,13 @@ const axios = require('axios');
 
 const addEtsComm = async (req, res) => {
     try {
-        const { id_entreprise , id_commentaire } = req.body.data;
+
+        // console.log('addEtsComm',req.body.data);
+        const { id_compagny , id_commentaire } = req.body.data;
 
         const newEtsComm = await EtsComm.create({
             id_commentaire:id_commentaire,
-            id_ets_com:id_entreprise
+            id_ets_com:id_compagny
         });
      
         res.status(201).json({

@@ -5,8 +5,8 @@ const axios = require('axios');
 const addCommentaire = async (req, res) => {
     try {
         console.log("Adding commentaire", req.body);
-        const { id_photo, contenu_commentaire,  nombre_etoiles, date_creation,categorie,nom_entreprise,addresse_entreprise, id_Localisation, } = req.body.data;
-
+        const { id_photo, contenu_commentaire,  nombre_etoiles, date_creation,categorie,nom_entreprise,addresse_entreprise, id_Localisation, id_entreprise } = req.body.data;
+       
         const newData = {
             id_photo,
             contenu_commentaire,
@@ -24,13 +24,14 @@ const addCommentaire = async (req, res) => {
             nom_entreprise,
             addresse_entreprise ,
             id_Localisation,
-            categorie
+            categorie,
+            id_entreprise
         }
         await axios.post('http://localhost:8082/apiNotabene/v1/addEntreprise', { data });
         res.status(201).json({
             success: true,
             message: 'Commentaire created successfully',
-            user: newComment
+            // user: newComment
         });
     } catch (error) {
         console.error('Error creating commentaire:', error);
@@ -95,14 +96,15 @@ const allCommentaire = async (req, res) => {
             };
         });
        
-       donneesCommunes.forEach((element, outerIndex) => {
-                element.commentaires.forEach((commentaire, innerIndex) => {
-                   
-                    if(idEntreprise==commentaire.entreprise.id_entreprise){
-                        dataFinal.push(commentaire)
-                    }
-                });
+        donneesCommunes.forEach((element, outerIndex) => {
+            element.commentaires.forEach((commentaire, innerIndex) => {
+                const entreprise = commentaire.entreprise; // Get the entreprise object
+                if (entreprise && parseInt(idEntreprise) === entreprise.id_entreprise) {
+                    dataFinal.push(commentaire);
+                }
             });
+        });
+        
 
         // console.log(dataFinal)
         // Envoi de la réponse JSON avec les données générées
