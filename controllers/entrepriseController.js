@@ -7,7 +7,7 @@ const addEntreprise = async (req, res) => {
     try {
         const { nom_entreprise,addresse_entreprise, id_commentaire, id_Localisation,categorie } = req.body.data;
 
-        console.log('Adding Entreprise', req.body);
+        // console.log('Adding Entreprise', req.body);
 
         const newEntreprise = await Entreprise.create({
             "nom_entreprise":nom_entreprise,
@@ -36,7 +36,7 @@ const addEntreprise = async (req, res) => {
     }
 }
 
-//------ GET USER BY ID-------------//
+//------ GET ENTREPRISE BY CATEGORIES-------------//
 
 const getEntreprisByCategorie = async (req, res) => {
     const categorie = req.params.categorie;
@@ -61,6 +61,7 @@ const getEntreprisByCategorie = async (req, res) => {
     }
 };
 
+//------ GET ALL ENTREPRISE-------------//
 const getEntreprises = async (req, res) => {
     try {
         const allEntreprise = await Entreprise.findAll({});
@@ -80,6 +81,7 @@ const getEntreprises = async (req, res) => {
         });
     }
 };
+
 
 const getEntreprisesByServer = async (req, res) => {
     try {
@@ -104,9 +106,47 @@ const getEntreprisesByServer = async (req, res) => {
 };
 
 
+
+//------ GET ALL ENTREPRISE MORE INFORMATIONS-------------//
+const getEntreprisesMoreInfos = async (req, res) => {
+    try {
+        const allEntreprise = await Entreprise.findAll({});
+        const mesLocalisations= await axios.get('http://localhost:8082/apiNotabene/v1/getAllLocalisation');
+
+
+        const mesData = allEntreprise.map(item => {
+            const matchingEntreprise = mesLocalisations.data["AllLocalisations"].find(loc => loc.id_Localisation === item.id_Localisation);
+            return {
+                id_entreprise: item.id_entreprise,
+                nom_entreprise: item.nom_entreprise,
+                adresse_entreprise: item.adresse_entreprise,
+                categories: item.categories,
+                latitude: matchingEntreprise ? matchingEntreprise.latitude : null,
+                longitude: matchingEntreprise ? matchingEntreprise.longitude :null,
+               
+            };
+          
+        });
+        res.status(200).json({
+            success: true,
+            message: 'Entreprise retrieved successfully',
+            data: mesData
+        });
+    } catch (error) {
+        console.error('Error retrieving Entreprise :', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while retrieving Entreprise .',
+            error: error.message
+        });
+    }
+};
+
+
 module.exports = {
     addEntreprise,
     getEntreprisByCategorie,
     getEntreprises,
-    getEntreprisesByServer
+    getEntreprisesByServer,
+    getEntreprisesMoreInfos
 };

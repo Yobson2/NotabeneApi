@@ -9,5 +9,5 @@ router.post('/addEntreprise',entrepriseController.addEntreprise);
 router.get('/getAllEntreprise/:categorie',entrepriseController.getEntreprisByCategorie);
 router.get('/getAllEntreprise',entrepriseController.getEntreprises);
 router.get('/getItems',entrepriseController.getEntreprisesByServer);
-
+router.get('/getItemsCommentaires',entrepriseController.getEntreprisesMoreInfos);
 module.exports=router

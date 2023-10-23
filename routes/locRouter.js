@@ -7,6 +7,7 @@ const router= express.Router();
 //MES ENDPOINTS
 
 router.post('/addPost/:id',multiPhoto,locController.addPost);
-// app.use(locController.test);
+router.get('/getAllLocalisation',locController.getLocalisations);
+
 
 module.exports=router

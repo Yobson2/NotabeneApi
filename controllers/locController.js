@@ -47,7 +47,27 @@ const addPost = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+//------ GET ALL ENTREPRISE-------------//
+const getLocalisations = async (req, res) => {
+    try {
+        const allLoc = await Localisation.findAll({});
 
+        // console.log('mes données',allLoc);
+        res.status(200).json({
+            success: true,
+            message: 'Localisation retrieved successfully',
+            AllLocalisations: allLoc
+        });
+    } catch (error) {
+        console.error('Error retrieving Localisation:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while retrieving Localisation .',
+            error: error.message
+        });
+    }
+};
 module.exports = {
-    addPost
+    addPost,
+    getLocalisations
 };
