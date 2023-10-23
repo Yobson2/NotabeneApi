@@ -84,7 +84,8 @@ const allCommentaire = async (req, res) => {
                     id_commentaire: commentaire.dataValues.id_commentaire,
                     id_photo: commentaire.dataValues.id_photo,
                     contenu_commentaire: commentaire.dataValues.contenu_commentaire,
-                    date_commentaire: commentaire.dataValues.date_commentaire,
+                    date_commentaire:commentaire.dataValues.date_commentaire.toISOString().slice(0, 10),
+                    heure:commentaire.dataValues.date_commentaire.getHours()+"h"+ commentaire.dataValues.date_commentaire.getMinutes(),
                     nombre_etoiles: commentaire.dataValues.nombre_etoiles,
                     createdAt: commentaire.dataValues.createdAt,
                     entreprise: resultEntreprise.data.find(entreprise =>
@@ -103,7 +104,7 @@ const allCommentaire = async (req, res) => {
                 });
             });
 
-        console.log(dataFinal)
+        // console.log(dataFinal)
         // Envoi de la réponse JSON avec les données générées
         res.status(200).json({
             success: true,
