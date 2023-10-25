@@ -60,7 +60,8 @@ const getAllUsers = async (req, res) => {
                 photo_user: user.photo_user
             };
         });
-        res.status(200).json(userData);
+   
+        res.status(200).json( userData);
 
     } catch (error) {
         console.error('Erreur lors de la récupération des utilisateurs :', error);

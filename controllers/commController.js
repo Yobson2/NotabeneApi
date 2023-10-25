@@ -12,6 +12,7 @@ const addCommentaire = async (req, res) => {
             contenu_commentaire,
             nombre_etoiles:  nombre_etoiles,
             date_commentaire: date_creation,
+            categories: categorie
         };
 
        
@@ -24,7 +25,6 @@ const addCommentaire = async (req, res) => {
             nom_entreprise,
             addresse_entreprise ,
             id_Localisation,
-            categorie,
             id_entreprise
         }
         await axios.post('http://localhost:8082/apiNotabene/v1/addEntreprise', { data });
@@ -44,9 +44,9 @@ const addCommentaire = async (req, res) => {
 }
 const allCommentaire = async (req, res) => {
     const dataFinal=[]
-    const idEntreprise=req.params.idEntreprise;
+    const itemCategorie=req.params.categorie;
 
-    console.log('Creating', idEntreprise)
+    console.log('Creating', itemCategorie);
     try {
         // Récupération des données depuis différentes sources en parallèle
         const [commentaires, resultUser, resultPhoto, resultEntreprise] = await Promise.all([
@@ -56,10 +56,11 @@ const allCommentaire = async (req, res) => {
             axios.get('http://localhost:8082/apiNotabene/v1/getItems')
         ]);
 
-        // Création d'un ensemble d'IDs d'utilisateurs pour une recherche plus efficace
+
+        // // Création d'un ensemble d'IDs d'utilisateurs pour une recherche plus efficace
         const idsUtilisateurs = new Set(resultUser.data.map(user => user.id_utilisateur));
 
-        // Création d'un objet pour stocker les photos associées à chaque utilisateur
+        // // Création d'un objet pour stocker les photos associées à chaque utilisateur
         const utilisateursAvecPhotos = resultPhoto.data.reduce((acc, photo) => {
             const { id_utilisateur, id_photo } = photo;
             acc[id_utilisateur] = acc[id_utilisateur] || [];
@@ -67,10 +68,10 @@ const allCommentaire = async (req, res) => {
             return acc;
         }, {});
 
-        // Filtrage des utilisateurs qui ont au moins une photo
+        // // Filtrage des utilisateurs qui ont au moins une photo
         const utilisateursAvecPhotosFiltres = Object.keys(utilisateursAvecPhotos).filter(id => idsUtilisateurs.has(Number(id)));
 
-        // Génération des données finales
+        // // Génération des données finales
         const donneesCommunes = utilisateursAvecPhotosFiltres.map(id => {
             const user = resultUser.data.find(user => user.id_utilisateur === Number(id));
             const photos = utilisateursAvecPhotos[id];
@@ -88,6 +89,7 @@ const allCommentaire = async (req, res) => {
                     date_commentaire:commentaire.dataValues.date_commentaire.toISOString().slice(0, 10),
                     heure:commentaire.dataValues.date_commentaire.getHours()+"h"+ commentaire.dataValues.date_commentaire.getMinutes(),
                     nombre_etoiles: commentaire.dataValues.nombre_etoiles,
+                    categories: commentaire.dataValues.categories,
                     createdAt: commentaire.dataValues.createdAt,
                     entreprise: resultEntreprise.data.find(entreprise =>
                         entreprise.id_commentaire === commentaire.dataValues.id_commentaire
@@ -95,18 +97,21 @@ const allCommentaire = async (req, res) => {
                 })),
             };
         });
+
+       
        
         donneesCommunes.forEach((element, outerIndex) => {
+
             element.commentaires.forEach((commentaire, innerIndex) => {
-                const entreprise = commentaire.entreprise; // Get the entreprise object
-                if (entreprise && parseInt(idEntreprise) === entreprise.id_entreprise) {
+                // const entreprise = commentaire.entreprise; // Get the entreprise object
+                if (itemCategorie === commentaire.categories) {
                     dataFinal.push(commentaire);
                 }
             });
         });
         
 
-        // console.log(dataFinal)
+        console.log(dataFinal)
         // Envoi de la réponse JSON avec les données générées
         res.status(200).json({
             success: true,

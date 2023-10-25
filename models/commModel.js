@@ -24,6 +24,9 @@ module.exports=(sequelize, DataTypes )=>{
     nombre_etoiles: {
       type:DataTypes.INTEGER,
     },
+    categories: {
+      type:DataTypes.STRING,
+    },
       
     });
 

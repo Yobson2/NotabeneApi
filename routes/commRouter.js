@@ -6,6 +6,6 @@ const router= express.Router();
 //MES ENDPOINTS
 
 router.post('/addCommentaire',commController.addCommentaire);
-router.get('/getAllCommentaire/:idEntreprise',commController.allCommentaire);
+router.get('/getAllCommentaire/:categorie',commController.allCommentaire);
 
 module.exports=router

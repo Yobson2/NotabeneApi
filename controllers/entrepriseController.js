@@ -5,7 +5,7 @@ const axios = require('axios');
 
 const addEntreprise = async (req, res) => {
     try {
-        const { nom_entreprise, addresse_entreprise, id_commentaire, id_Localisation, categorie, id_entreprise } = req.body.data;
+        const { nom_entreprise, addresse_entreprise, id_commentaire, id_Localisation, id_entreprise } = req.body.data;
        
         let enterpriseId;
         if (nom_entreprise === null || nom_entreprise === '') {
@@ -15,7 +15,6 @@ const addEntreprise = async (req, res) => {
         const allData = await Entreprise.findAll({});
         const matchFound = allData.some(item => id_entreprise === item.id_entreprise);
         
-        console.log('matchFound', matchFound);
       
         if (matchFound) {
             enterpriseId = id_entreprise;
@@ -24,7 +23,6 @@ const addEntreprise = async (req, res) => {
                 "nom_entreprise": nom_entreprise,
                 "adresse_entreprise": addresse_entreprise,
                 "id_Localisation": id_Localisation,
-                "categories": categorie
             });
             enterpriseId = newEnterprise.id_entreprise;
         }
