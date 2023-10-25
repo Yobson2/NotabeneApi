@@ -6,11 +6,11 @@ const addEtsComm = async (req, res) => {
     try {
 
         // console.log('addEtsComm',req.body.data);
-        const { id_compagny , id_commentaire } = req.body.data;
+        const { enterpriseId , id_commentaire } = req.body.data;
 
         const newEtsComm = await EtsComm.create({
             id_commentaire:id_commentaire,
-            id_ets_com:id_compagny
+            id_entreprise:enterpriseId
         });
      
         res.status(201).json({

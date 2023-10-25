@@ -5,31 +5,41 @@ const axios = require('axios');
 
 const addEntreprise = async (req, res) => {
     try {
-        // console.log('Adding entreprise', req.body.data)
-        const { nom_entreprise,addresse_entreprise, id_commentaire, id_Localisation,categorie,id_entreprise } = req.body.data;
-
-     const allData = await Entreprise.findAll({});
-       // Vérifiez si une correspondance est trouvée
-       const matchFound = allData.some(item => id_entreprise === item.id_entreprise); 
-       let id_compagny;
-
-       if (matchFound) {
-        id_compagny=id_entreprise
-       }else{
-            const newEntreprise = await Entreprise.create({
-                "nom_entreprise":nom_entreprise,
-                "adresse_entreprise":addresse_entreprise,
-                "id_Localisation":  id_Localisation,
-                "categories":categorie
-            });
-            id_compagny=newEntreprise.id_entreprise
-       }
-    
-        const data={
-            id_commentaire,
-            id_compagny,  
+        const { nom_entreprise, addresse_entreprise, id_commentaire, id_Localisation, categorie, id_entreprise } = req.body.data;
+       
+        let enterpriseId;
+        if (nom_entreprise === null || nom_entreprise === '') {
+            console.log('nom_entreprise is required');
         }
-      await axios.post('http://localhost:8082/apiNotabene/v1/addEts', { data });
+
+        const allData = await Entreprise.findAll({});
+        const matchFound = allData.some(item => id_entreprise === item.id_entreprise);
+        
+        console.log('matchFound', matchFound);
+      
+        if (matchFound) {
+            enterpriseId = id_entreprise;
+        } else {
+            const newEnterprise = await Entreprise.create({
+                "nom_entreprise": nom_entreprise,
+                "adresse_entreprise": addresse_entreprise,
+                "id_Localisation": id_Localisation,
+                "categories": categorie
+            });
+            enterpriseId = newEnterprise.id_entreprise;
+        }
+
+        const data = {
+            id_commentaire,
+            enterpriseId,
+        }
+
+        if (nom_entreprise &&  enterpriseId) {
+            await axios.post('http://localhost:8082/apiNotabene/v1/addEts', { data });
+        } else {
+            console.log('not compagny found');
+        }
+
         res.status(201).json({
             success: true,
             message: 'Entreprise created successfully',
@@ -44,6 +54,7 @@ const addEntreprise = async (req, res) => {
         });
     }
 }
+
 
 //------ GET ENTREPRISE BY CATEGORIES-------------//
 

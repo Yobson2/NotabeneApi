@@ -15,7 +15,7 @@ async function saveFiles(files) {
 
 const addPost = async (req, res) => {
     try {
-        // console.log('Saving post', req.body);
+        console.log('Saving post', req.body);
         const id_utilisateur = parseInt(req.params.id);
         const { latitude_, longitude_, contenu_commentaire, nom_entreprise, addresse_entreprise, nombre_etoiles, categorie,id_entreprise } = req.body;
         const id_localisation=req.body.id_localisation
