@@ -113,7 +113,9 @@ const getEntreprisesByServer = async (req, res) => {
             return {
                 id_entreprise: item.id_entreprise,
                 id_commentaire: matchingEntreprise ? matchingEntreprise.id_commentaire : null,
-                nom_entreprise: item.nom_entreprise
+                nom_entreprise: item.nom_entreprise,
+                adresse_entreprise: item.adresse_entreprise,
+                id_Localisation:item.id_Localisation,
             };
           
         });

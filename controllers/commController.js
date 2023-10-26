@@ -57,6 +57,7 @@ const allCommentaire = async (req, res) => {
         ]);
 
 
+        // console.log('test', resultEntreprise);
         // // Création d'un ensemble d'IDs d'utilisateurs pour une recherche plus efficace
         const idsUtilisateurs = new Set(resultUser.data.map(user => user.id_utilisateur));
 
@@ -97,26 +98,43 @@ const allCommentaire = async (req, res) => {
                 })),
             };
         });
-
+      
        
-       
-        donneesCommunes.forEach((element, outerIndex) => {
-
-            element.commentaires.forEach((commentaire, innerIndex) => {
-                // const entreprise = commentaire.entreprise; // Get the entreprise object
-                if (itemCategorie === commentaire.categories) {
-                    dataFinal.push(commentaire);
-                }
-            });
-        });
+        // donneesCommunes.forEach((element, outerIndex) => {
+        //     element.commentaires.forEach((commentaire, innerIndex) => { 
+        //         if (itemCategorie === commentaire.categories) {
+        //             dataFinal.push(commentaire);
+        //         }    
+        //     });
+        // });
         
 
-        console.log(dataFinal)
+        donneesCommunes.forEach((element, outerIndex) => {
+            element.commentaires.forEach((commentaire, innerIndex) => { 
+                if (itemCategorie === commentaire.categories && typeof itemCategorie==='string') {
+                    dataFinal.push(commentaire);
+                }    
+                if(commentaire.entreprise !== undefined){
+                    if (parseInt(itemCategorie) === commentaire.entreprise.id_entreprise) {
+                             dataFinal.push(commentaire);
+                       }    
+                }
+            //     if ((typeof itemCategorie === 'string' && itemCategorie === commentaire.categories) ||
+            //     (commentaire.entreprise && parseInt(itemCategorie) === commentaire.entreprise.id_entreprise)) {
+            //     dataFinal.push(commentaire);
+            // }
+                
+            });
+        });
+   
+        // console.log('dataFinal', dataFinal);
+
+        dataFinal.reverse();
         // Envoi de la réponse JSON avec les données générées
         res.status(200).json({
             success: true,
             message: 'Commentaires récupérés avec succès',
-            utilisateursAvecCommentaires: dataFinal
+            utilisateursAvecCommentaires:  dataFinal
         });
     } catch (error) {
         // Gestion des erreurs
@@ -135,6 +153,9 @@ function filterCommentaires(commentaires, photos) {
         photos.includes(commentaire.dataValues.id_photo)
     );
 }
+
+
+
 
 
 
