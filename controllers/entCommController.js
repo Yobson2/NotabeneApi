@@ -34,10 +34,12 @@ const getEtsComm = async (req, res) => {
         const allEntreprise = await EtsComm.findAll({});
         const mesData = allEntreprise.map(item => {
             return {
-                id_entreprise: item.id_ets_com,
+                id_entreprise: item.id_entreprise,
                 id_commentaire: item.id_commentaire
             };
         });
+
+       
         res.status(200).json(mesData);
     } catch (error) {
         console.error('Error retrieving Entreprise :', error);

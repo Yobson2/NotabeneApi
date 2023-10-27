@@ -103,27 +103,39 @@ const getEntreprises = async (req, res) => {
 
 const getEntreprisesByServer = async (req, res) => {
     try {
-        // Récupérer toutes les entreprises et les informations depuis le serveur externe
-        const allEntreprise = await Entreprise.findAll({});
+        // Récupérer toutes les entreprises et leurs informations depuis le serveur externe
+        const allEntreprises = await Entreprise.findAll({});
         const resultEtsComm = await axios.get('http://localhost:8082/apiNotabene/v1/getAllEtsComm');
 
-        // Mapper les données pour n'inclure que les champs nécessaires et les regrouper
-        const groupedData = allEntreprise.map(item => {
-            const matchingEntreprise = resultEtsComm.data.find(entreprise => entreprise.id_entreprise === item.id_entreprise);
+        // Regrouper les commentaires par entreprise
+        const entrepriseComments = {};
+
+        resultEtsComm.data.forEach(commentaire => {
+            const entrepriseId = commentaire.id_entreprise;
+            if (!entrepriseComments[entrepriseId]) {
+                entrepriseComments[entrepriseId] = [];
+            }
+            entrepriseComments[entrepriseId].push(commentaire.id_commentaire);
+        });
+
+        // Mapper les données pour inclure uniquement les champs nécessaires et les regrouper
+        const groupedData = allEntreprises.map(item => {
+            const commentaires = entrepriseComments[item.id_entreprise];
             return {
                 id_entreprise: item.id_entreprise,
-                id_commentaire: matchingEntreprise ? matchingEntreprise.id_commentaire : null,
+                id_commentaires: commentaires,
                 nom_entreprise: item.nom_entreprise,
                 adresse_entreprise: item.adresse_entreprise,
-                id_Localisation:item.id_Localisation,
+                id_Localisation: item.id_Localisation,
             };
-          
         });
+
         res.status(200).json(groupedData);
     } catch (error) {
         console.log(error);
     }
 };
+
 
 
 

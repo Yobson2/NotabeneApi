@@ -7,5 +7,6 @@ const router= express.Router();
 
 router.post('/addCommentaire',commController.addCommentaire);
 router.get('/getAllCommentaire/:categorie',commController.allCommentaire);
+router.get('/getAllCommentaire/:categorie/:id',commController.allCommentairesDetails);
 
 module.exports=router
