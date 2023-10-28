@@ -43,12 +43,12 @@ const addCommentaire = async (req, res) => {
     }
 }
 const allCommentaire = async (req, res) => {
-    const dataFinal=[]
-    const itemCategorie=req.params.categorie;
+    const dataFinal = [];
+    const itemCategorie = req.params.categorie;
 
     console.log('Creating', itemCategorie);
+
     try {
-        // Récupération des données depuis différentes sources en parallèle
         const [commentaires, resultUser, resultPhoto, resultEntreprise] = await Promise.all([
             Commentaires.findAll({}),
             axios.get('http://localhost:8082/apiNotabene/v1/allUsers'),
@@ -56,11 +56,8 @@ const allCommentaire = async (req, res) => {
             axios.get('http://localhost:8082/apiNotabene/v1/getItems')
         ]);
 
-
-        // // Création d'un ensemble d'IDs d'utilisateurs pour une recherche plus efficace
         const idsUtilisateurs = new Set(resultUser.data.map(user => user.id_utilisateur));
 
-        // // Création d'un objet pour stocker les photos associées à chaque utilisateur
         const utilisateursAvecPhotos = resultPhoto.data.reduce((acc, photo) => {
             const { id_utilisateur, id_photo } = photo;
             acc[id_utilisateur] = acc[id_utilisateur] || [];
@@ -68,57 +65,53 @@ const allCommentaire = async (req, res) => {
             return acc;
         }, {});
 
-        // // Filtrage des utilisateurs qui ont au moins une photo
         const utilisateursAvecPhotosFiltres = Object.keys(utilisateursAvecPhotos).filter(id => idsUtilisateurs.has(Number(id)));
 
-        // // Génération des données finales
         const donneesCommunes = utilisateursAvecPhotosFiltres.map(id => {
             const user = resultUser.data.find(user => user.id_utilisateur === Number(id));
             const photos = utilisateursAvecPhotos[id];
             const userCommentaires = filterCommentaires(commentaires, photos);
-            
-            return {
-                commentaires: userCommentaires.map(commentaire => ({
+
+            const commentairesMapped = userCommentaires.map(commentaire => {
+                const entreprise = resultEntreprise.data.find(entreprise =>
+                    entreprise.id_commentaires && entreprise.id_commentaires.includes(commentaire.dataValues.id_commentaire)
+                );
+
+                return {
                     id_utilisateur: user.id_utilisateur,
                     nom_utilisateur: user.nom_utilisateur,
                     photo_user: user.photo_user,
-                    // id_photos: photos,
                     id_commentaire: commentaire.dataValues.id_commentaire,
                     id_photo: commentaire.dataValues.id_photo,
                     contenu_commentaire: commentaire.dataValues.contenu_commentaire,
-                    date_commentaire:commentaire.dataValues.date_commentaire.toISOString().slice(0, 10),
-                    heure:commentaire.dataValues.date_commentaire.getHours()+"h"+ commentaire.dataValues.date_commentaire.getMinutes(),
+                    date_commentaire: commentaire.dataValues.date_commentaire.toISOString().slice(0, 10),
+                    heure: commentaire.dataValues.date_commentaire.getHours() + "h" + commentaire.dataValues.date_commentaire.getMinutes(),
                     nombre_etoiles: commentaire.dataValues.nombre_etoiles,
                     categories: commentaire.dataValues.categories,
                     createdAt: commentaire.dataValues.createdAt,
-                    entreprise: resultEntreprise.data.find(entreprise =>
-                        entreprise.id_commentaires.includes(commentaire.dataValues.id_commentaire)
-                    )
-                })),
-            };
+                    entreprise: entreprise ? entreprise : undefined,
+                };
+            });
+
+            return { commentaires: commentairesMapped };
         });
-        
 
         donneesCommunes.forEach((element, outerIndex) => {
             element.commentaires.forEach((commentaire, innerIndex) => { 
-                if (itemCategorie === commentaire.categories && typeof itemCategorie==='string') {
+                if (itemCategorie === commentaire.categories && typeof itemCategorie === 'string') {
                     dataFinal.push(commentaire);
                 }    
-                
             });
         });
-   
-        // console.log('dataFinal', dataFinal);
 
         dataFinal.reverse();
-        // Envoi de la réponse JSON avec les données générées
+
         res.status(200).json({
             success: true,
             message: 'Commentaires récupérés avec succès',
             utilisateursAvecCommentaires:  dataFinal
         });
     } catch (error) {
-        // Gestion des erreurs
         console.error('Erreur lors de la récupération des Commentaires :', error);
         res.status(500).json({
             success: false,
@@ -128,12 +121,12 @@ const allCommentaire = async (req, res) => {
     }
 };
 
-// Fonction pour filtrer les commentaires en fonction des photos
 function filterCommentaires(commentaires, photos) {
     return commentaires.filter(commentaire =>
         photos.includes(commentaire.dataValues.id_photo)
     );
 }
+
 
 
 const allCommentairesDetails =async (req, res) => {
