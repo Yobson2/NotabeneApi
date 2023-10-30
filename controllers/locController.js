@@ -84,7 +84,33 @@ const getLocalisations = async (req, res) => {
         });
     }
 };
+const getLocalisationsById = async (req, res) => {
+    const idLoc=req.params.idLoc;
+  console.log('Get users', idLoc);
+    try {
+        const allLoc = await Localisation.findOne({
+            where: {
+                id_Localisation: idLoc
+            }
+        });
+
+        // console.log('mes données',allLoc);
+        res.status(200).json({
+            success: true,
+            message: 'Localisation retrieved successfully',
+            AllLocalisations: allLoc
+        });
+    } catch (error) {
+        console.error('Error retrieving Localisation:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while retrieving Localisation .',
+            error: error.message
+        });
+    }
+};
 module.exports = {
     addPost,
-    getLocalisations
+    getLocalisations,
+    getLocalisationsById
 };

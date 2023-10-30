@@ -8,6 +8,6 @@ const router= express.Router();
 
 router.post('/addPost/:id',multiPhoto,locController.addPost);
 router.get('/getAllLocalisation',locController.getLocalisations);
-
+router.get('/getAllLocalisation/:idLoc',locController.getLocalisationsById);
 
 module.exports=router

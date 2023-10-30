@@ -25,9 +25,10 @@ app.get('/',(req,res)=>{
 })
 
 
-// app.use('/images', express.static(mesImages));
-// app.use('/imagesProfil', express.static(allImagesProfil));
+app.use('/images', express.static(mesImages));
+app.use('/imagesProfil', express.static(allImagesProfil));
 
+console.log("mesImages",mesImages )
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

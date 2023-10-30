@@ -77,7 +77,9 @@ const getAllUsers = async (req, res) => {
 //------ GET USER BY ID-------------//
 
 const getUsersById = async (req, res) => {
-    const id_utilisateur = req.params.id;
+    const id_utilisateur = req.params.idPhoto;
+
+   
     try {
         const allUsers = await Users.findOne({
             where: {

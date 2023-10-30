@@ -65,7 +65,39 @@ const getAllPhoto = async (req, res) => {
 }
 }
 
+
+const getAllPhotoById = async (req, res) => {
+  const idPhoto=req.params.idPhoto;
+
+  try {
+    const allPhotos = await Photos.findOne({
+        where: {
+          id_photo: idPhoto
+      }
+    });
+
+    
+    const images = JSON.parse(allPhotos.dataValues.image);
+    
+  
+  res.status(200).json({
+    success: true,
+    message: 'mes données ont été recuperer	',
+    allPhotos: images
+});
+   
+} catch (error) {
+    console.error('Error retrieving Photos:', error);
+    res.status(500).json({
+        success: false,
+        message: 'An error occurred while retrieving Photos.',
+        error: error.message
+    });
+}
+}
+
 module.exports = {
   sendPhoto,
-  getAllPhoto
+  getAllPhoto,
+  getAllPhotoById
 };
