@@ -5,7 +5,7 @@ const Photos = db.photos;
 
 const sendPhoto = async (req, res) => {
  
-  // console.log("Sending photo to " + req.body);
+  
   try {
     const { id_utilisateur, id_Localisation, images,contenu_commentaire,nombre_etoiles,categorie,nom_entreprise,addresse_entreprise,id_ent } = req.body.data;
 
@@ -50,7 +50,8 @@ const getAllPhoto = async (req, res) => {
     const photoData = allPhotos.map(item => {
       return {
           id_photo: item.id_photo,
-          id_utilisateur: item.id_utilisateur
+          id_utilisateur: item.id_utilisateur,
+          id_localisation: item.id_Localisation
       };
   });
   res.status(200).json(photoData);
@@ -78,12 +79,17 @@ const getAllPhotoById = async (req, res) => {
 
     
     const images = JSON.parse(allPhotos.dataValues.image);
-    
-  
+
+    // images.forEach((element, index, array) => {
+    //   if (index === array.length - 1) {
+    //     array[index] = element.slice(0, -2);
+    //   }
+    // });
+    // let donnees = images.map(element => element.replace(/\\|"|"/g, ''));
   res.status(200).json({
     success: true,
     message: 'mes données ont été recuperer	',
-    allPhotos: images
+    allPhotos:images
 });
    
 } catch (error) {

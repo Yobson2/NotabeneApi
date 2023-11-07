@@ -56,6 +56,8 @@ const allCommentaire = async (req, res) => {
             axios.get('http://localhost:8082/apiNotabene/v1/getItems')
         ]);
 
+
+        console.log('tets ok',resultPhoto.data);
         const idsUtilisateurs = new Set(resultUser.data.map(user => user.id_utilisateur));
 
         const utilisateursAvecPhotos = resultPhoto.data.reduce((acc, photo) => {
@@ -65,6 +67,9 @@ const allCommentaire = async (req, res) => {
             return acc;
         }, {});
 
+       
+
+       
         const utilisateursAvecPhotosFiltres = Object.keys(utilisateursAvecPhotos).filter(id => idsUtilisateurs.has(Number(id)));
 
         const donneesCommunes = utilisateursAvecPhotosFiltres.map(id => {
@@ -76,7 +81,7 @@ const allCommentaire = async (req, res) => {
                 const entreprise = resultEntreprise.data.find(entreprise =>
                     entreprise.id_commentaires && entreprise.id_commentaires.includes(commentaire.dataValues.id_commentaire)
                 );
-
+                 
                 return {
                     id_utilisateur: user.id_utilisateur,
                     nom_utilisateur: user.nom_utilisateur,
@@ -89,6 +94,7 @@ const allCommentaire = async (req, res) => {
                     nombre_etoiles: commentaire.dataValues.nombre_etoiles,
                     categories: commentaire.dataValues.categories,
                     createdAt: commentaire.dataValues.createdAt,
+                    id_localisation:getIdLocalisationByIdPhoto(resultPhoto.data, commentaire.dataValues.id_photo),
                     entreprise: entreprise ? entreprise : undefined,
                 };
             });
@@ -125,7 +131,13 @@ function filterCommentaires(commentaires, photos) {
     return commentaires.filter(commentaire =>
         photos.includes(commentaire.dataValues.id_photo)
     );
+
+   
 }
+function getIdLocalisationByIdPhoto(tableau, idPhoto) {
+    const objetTrouve = tableau.find(objet => objet.id_photo === idPhoto);
+    return objetTrouve ? objetTrouve.id_localisation : null;
+  }
 
 
 
@@ -226,6 +238,98 @@ const allCommentairesDetails =async (req, res) => {
 }
 
 
+const getGlobalCommentaire= async (req, res) => {
+    let  dataFinal=[];
+   
+    try {
+         // Récupération des données depuis différentes sources en parallèle
+         const [commData, userData, photoData, entrepriseData] = await Promise.all([
+            Commentaires.findAll({}),
+            axios.get('http://localhost:8082/apiNotabene/v1/allUsers'),
+            axios.get('http://localhost:8082/apiNotabene/v1/getAllPhoto'),
+            axios.get('http://localhost:8082/apiNotabene/v1/getItems'),
+        ]);
+
+        console.log('----------',commData.data, userData.data, photoData.data, entrepriseData.data,'----------')
+        // // Création d'un ensemble d'IDs d'utilisateurs pour une recherche plus efficace
+        const idsUtilisateurs = new Set(userData.data.map(user => user.id_utilisateur));
+
+        // // Création d'un objet pour stocker les photos associées à chaque utilisateur
+        const utilisateursAvecPhotos = photoData.data.reduce((acc, photo) => {
+            const { id_utilisateur, id_photo } = photo;
+            acc[id_utilisateur] = acc[id_utilisateur] || [];
+            acc[id_utilisateur].push(id_photo);
+            return acc;
+        }, {});
+
+        // // Filtrage des utilisateurs qui ont au moins une photo
+        const utilisateursAvecPhotosFiltres = Object.keys(utilisateursAvecPhotos).filter(id => idsUtilisateurs.has(Number(id)));
+
+        // // Génération des données finales
+        const donneesCommunes = utilisateursAvecPhotosFiltres.map(id => {
+            const user = userData.data.find(user => user.id_utilisateur === Number(id));
+            const photos = utilisateursAvecPhotos[id];
+            const userCommentaires = filterCommentaires(commData, photos);
+        
+            const commentaires = userCommentaires.map(commentaire => {
+                const entreprise = entrepriseData.data.some(entreprise => entreprise.id_entreprise === commentaire.id_entreprise);
+        
+                return {
+                    id_utilisateur: user.id_utilisateur,
+                    nom_utilisateur: user.nom_utilisateur,
+                    photo_user: user.photo_user,
+                    id_commentaire: commentaire.dataValues.id_commentaire,
+                    id_photo: commentaire.dataValues.id_photo,
+                    contenu_commentaire: commentaire.dataValues.contenu_commentaire,
+                    date_commentaire: commentaire.dataValues.date_commentaire.toISOString().slice(0, 10),
+                    heure: commentaire.dataValues.date_commentaire.getHours() + "h" + commentaire.dataValues.date_commentaire.getMinutes(),
+                    nombre_etoiles: commentaire.dataValues.nombre_etoiles,
+                    categories: commentaire.dataValues.categories,
+                    createdAt: commentaire.dataValues.createdAt,
+                    // id_localisation:filterCommentaires(commentaire, photos),
+                    entreprise: entreprise ? entreprise : "null",
+                };
+            });
+        
+            return { commentaires };
+        });
+        
+        // dataFinal.push( donneesCommunes);
+       donneesCommunes.forEach((element, outerIndex) => {
+        element.commentaires.forEach((commentaire, innerIndex) => { 
+      
+            if(commentaire.entreprise !== "null"){
+                dataFinal.push(commentaire);
+            }
+                
+             });
+    });
+      
+    dataFinal.reverse();
+
+
+
+
+
+        res.status(200).json({
+            success: true,
+            message: 'Commentaires récupérés avec succès',
+            data: dataFinal
+        });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des Commentaires :', error);
+        res.status(500).json({
+            success: false,
+            message: 'Une erreur s\'est produite lors de la récupération des Commentaires .',
+            error: error.message
+        });
+    }
+
+
+    
+}
+
+
 
 
 
@@ -234,5 +338,6 @@ const allCommentairesDetails =async (req, res) => {
 module.exports = {
     addCommentaire,
     allCommentaire,
-    allCommentairesDetails
+    allCommentairesDetails,
+    getGlobalCommentaire
 };

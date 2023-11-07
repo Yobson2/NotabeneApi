@@ -13,9 +13,6 @@ module.exports=(sequelize, DataTypes )=>{
           nom_entreprise: {
           type: DataTypes.STRING,
         },
-        mot_de_passe_entreprise:{
-            type: DataTypes.STRING,
-        },
         adresse_entreprise: {
             type: DataTypes.STRING,
         },
@@ -27,6 +24,13 @@ module.exports=(sequelize, DataTypes )=>{
             references: {
                 model: 'localisations', 
                 key: 'id_Localisation', 
+              },
+        },
+        id_utilisateur: {
+            type:DataTypes.INTEGER,
+            references: {
+                model: 'utilisateurs', 
+                key: 'id_utilisateur', 
               },
         }
       });

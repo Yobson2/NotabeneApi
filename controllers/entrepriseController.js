@@ -3,8 +3,10 @@ const Entreprise = db.entreprise;
 const axios = require('axios');
 
 
-const addEntreprise = async (req, res) => {
+const addEntrepriseByCommentaire = async (req, res) => {
     try {
+
+        console.log('adding entreprise', req.body.data);
         const { nom_entreprise, addresse_entreprise, id_commentaire, id_Localisation, id_entreprise } = req.body.data;
        
         let enterpriseId;
@@ -53,6 +55,34 @@ const addEntreprise = async (req, res) => {
     }
 }
 
+const addEntrepriseByUser = async (req, res) => {
+  
+    const {id_Localisation, id_utilisateur,image, nom_entreprise, adresse_entreprise, } = req.body.data;
+    console.log('EnregistreEntreprise test ',image);
+  
+     try {
+        const newEnterprise = await Entreprise.create({
+            "nom_entreprise": nom_entreprise,
+            "adresse_entreprise": adresse_entreprise,
+            "id_utilisateur":id_utilisateur,
+            "photo_entreprises":image,
+            "id_Localisation": id_Localisation,
+        });
+        res.status(200).json({
+            success: true,
+            message: 'Entreprise enregistrée avec succes',
+        });
+     } catch (error) {
+        console.error('Error creating entreprise:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while creating the entreprise.',
+            error: error.message
+        });
+     }
+}
+
+
 
 //------ GET ENTREPRISE BY CATEGORIES-------------//
 
@@ -71,6 +101,29 @@ const getEntreprisByCategorie = async (req, res) => {
         });
     } catch (error) {
         console.error('Error retrieving Entreprise by categorie:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while retrieving Entreprise by categorie.',
+            error: error.message
+        });
+    }
+};
+
+const getEntreprisByIdUser = async (req, res) => {
+    const id_utilisateur = req.params.id_utilisateur;
+    try {
+        const allEntreprise = await Entreprise.findAll({
+            where: {
+                id_utilisateur: id_utilisateur
+            }
+        });
+        res.status(200).json({
+            success: true,
+            message: 'Entreprise by id_utilisateur retrieved successfully',
+            allEntreprises: allEntreprise
+        });
+    } catch (error) {
+        console.error('Error retrieving Entreprise by id_utilisateur:', error);
         res.status(500).json({
             success: false,
             message: 'An error occurred while retrieving Entreprise by categorie.',
@@ -175,11 +228,36 @@ const getEntreprisesMoreInfos = async (req, res) => {
     }
 };
 
+const deleteEntrepriseByUser= async (req, res)=>{
+   const idUser=req.params.id_utilisateur;
+   const idEntreprise=req.params.id_entreprise
+  
+   console.log('test', idUser, idEntreprise)
+   try {
+    await Entreprise.destroy({
+        where: {id_entreprise: idEntreprise}
+    })
+    res.status(200).json({
+        success: true,
+        message: 'Entreprise is destroyed successfully',
+        data: "ok"
+    });
+  
+        
+    } catch (error) {
+        console.error('Error retrieving Entreprise :', error); 
+    }
+
+}
+
 
 module.exports = {
-    addEntreprise,
+    addEntrepriseByCommentaire,
+    addEntrepriseByUser,
     getEntreprisByCategorie,
     getEntreprises,
     getEntreprisesByServer,
-    getEntreprisesMoreInfos
+    getEntreprisesMoreInfos,
+    getEntreprisByIdUser,
+    deleteEntrepriseByUser
 };

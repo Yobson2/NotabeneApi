@@ -64,6 +64,33 @@ const addPost = async (req, res) => {
     }
 };
 
+const addLocalisationByUser = async (req, res) => {
+    const id_utilisateur=req.params.idUser
+    const  image= req.file.filename
+    const { latitude_, longitude_ ,nom_entreprise,adresse_entreprise} = req.body;
+
+    try {
+        const nouveauloc = await Localisation.create({ latitude: parseFloat(latitude_), longitude: parseFloat(longitude_)});
+        const id_Localisation = nouveauloc.id_Localisation;
+       
+        const data = {
+            id_Localisation,
+            id_utilisateur,
+            image,
+            nom_entreprise,
+            adresse_entreprise
+        }
+
+        console.log('test',data);
+        const otherEndpoint = `http://localhost:8082/apiNotabene/v1/addEntreprises/${id_utilisateur}`; 
+        await axios.post(otherEndpoint, { data });
+        
+        res.status(200).json({ message: 'Images enregistrées avec succès.' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
 //------ GET ALL ENTREPRISE-------------//
 const getLocalisations = async (req, res) => {
     try {
@@ -112,5 +139,6 @@ const getLocalisationsById = async (req, res) => {
 module.exports = {
     addPost,
     getLocalisations,
-    getLocalisationsById
+    getLocalisationsById,
+    addLocalisationByUser
 };
