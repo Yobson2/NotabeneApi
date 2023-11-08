@@ -139,6 +139,15 @@ function getIdLocalisationByIdPhoto(tableau, idPhoto) {
     return objetTrouve ? objetTrouve.id_localisation : null;
   }
 
+  function getNameByIdPhoto(tableau, idLoc) {
+    const objetTrouve = tableau.find(objet => objet.id_Localisation === idLoc);
+    return objetTrouve ?{
+        "id_entreprise":objetTrouve.id_entreprise,
+         "nom_entreprise":objetTrouve.nom_entreprise,
+         "adresse_entreprise":objetTrouve.adresse_entreprise,
+         "id_Localisation":objetTrouve.id_Localisation
+        } : null;
+  }
 
 
 const allCommentairesDetails =async (req, res) => {
@@ -250,7 +259,6 @@ const getGlobalCommentaire= async (req, res) => {
             axios.get('http://localhost:8082/apiNotabene/v1/getItems'),
         ]);
 
-        console.log('----------',commData.data, userData.data, photoData.data, entrepriseData.data,'----------')
         // // Création d'un ensemble d'IDs d'utilisateurs pour une recherche plus efficace
         const idsUtilisateurs = new Set(userData.data.map(user => user.id_utilisateur));
 
@@ -262,9 +270,11 @@ const getGlobalCommentaire= async (req, res) => {
             return acc;
         }, {});
 
+        console.log('tetstst',photoData.data)
+
         // // Filtrage des utilisateurs qui ont au moins une photo
         const utilisateursAvecPhotosFiltres = Object.keys(utilisateursAvecPhotos).filter(id => idsUtilisateurs.has(Number(id)));
-
+     
         // // Génération des données finales
         const donneesCommunes = utilisateursAvecPhotosFiltres.map(id => {
             const user = userData.data.find(user => user.id_utilisateur === Number(id));
@@ -272,8 +282,9 @@ const getGlobalCommentaire= async (req, res) => {
             const userCommentaires = filterCommentaires(commData, photos);
         
             const commentaires = userCommentaires.map(commentaire => {
-                const entreprise = entrepriseData.data.some(entreprise => entreprise.id_entreprise === commentaire.id_entreprise);
-        
+                // const entreprise = entrepriseData.data.find(data => data.nom_entreprise!="");
+                 
+                
                 return {
                     id_utilisateur: user.id_utilisateur,
                     nom_utilisateur: user.nom_utilisateur,
@@ -286,8 +297,8 @@ const getGlobalCommentaire= async (req, res) => {
                     nombre_etoiles: commentaire.dataValues.nombre_etoiles,
                     categories: commentaire.dataValues.categories,
                     createdAt: commentaire.dataValues.createdAt,
-                    // id_localisation:filterCommentaires(commentaire, photos),
-                    entreprise: entreprise ? entreprise : "null",
+                    id_localisation:getIdLocalisationByIdPhoto(photoData.data, commentaire.dataValues.id_photo),
+                    entreprise_name: getNameByIdPhoto(entrepriseData.data, getIdLocalisationByIdPhoto(photoData.data, commentaire.dataValues.id_photo)),
                 };
             });
         
@@ -306,9 +317,6 @@ const getGlobalCommentaire= async (req, res) => {
     });
       
     dataFinal.reverse();
-
-
-
 
 
         res.status(200).json({

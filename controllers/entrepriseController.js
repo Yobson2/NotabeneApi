@@ -10,9 +10,6 @@ const addEntrepriseByCommentaire = async (req, res) => {
         const { nom_entreprise, addresse_entreprise, id_commentaire, id_Localisation, id_entreprise } = req.body.data;
        
         let enterpriseId;
-        if (nom_entreprise === null || nom_entreprise === '') {
-            console.log('nom_entreprise is required');
-        }
 
         const allData = await Entreprise.findAll({});
         const matchFound = allData.some(item => id_entreprise === item.id_entreprise);
@@ -21,12 +18,17 @@ const addEntrepriseByCommentaire = async (req, res) => {
         if (matchFound) {
             enterpriseId = id_entreprise;
         } else {
-            const newEnterprise = await Entreprise.create({
-                "nom_entreprise": nom_entreprise,
-                "adresse_entreprise": addresse_entreprise,
-                "id_Localisation": id_Localisation,
-            });
-            enterpriseId = newEnterprise.id_entreprise;
+            // Ajoutez une condition supplémentaire ici
+            if (nom_entreprise !== '' && addresse_entreprise !== '') {
+                const newEnterprise = await Entreprise.create({
+                    "nom_entreprise": nom_entreprise,
+                    "adresse_entreprise": addresse_entreprise,
+                    "id_Localisation": id_Localisation,
+                });
+                enterpriseId = newEnterprise.id_entreprise;
+            } else {
+                console.log('Both nom_entreprise and addresse_entreprise are required');
+            }
         }
 
         const data = {
