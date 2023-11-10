@@ -7,7 +7,7 @@ const addEntrepriseByCommentaire = async (req, res) => {
     try {
 
         console.log('adding entreprise', req.body.data);
-        const { nom_entreprise, addresse_entreprise, id_commentaire, id_Localisation, id_entreprise } = req.body.data;
+        const { nom_entreprise, addresse_entreprise, id_commentaire, id_Localisation, id_entreprise,categorie } = req.body.data;
        
         let enterpriseId;
 
@@ -24,6 +24,7 @@ const addEntrepriseByCommentaire = async (req, res) => {
                     "nom_entreprise": nom_entreprise,
                     "adresse_entreprise": addresse_entreprise,
                     "id_Localisation": id_Localisation,
+                    "categories": categorie
                 });
                 enterpriseId = newEnterprise.id_entreprise;
             } else {
@@ -59,7 +60,7 @@ const addEntrepriseByCommentaire = async (req, res) => {
 
 const addEntrepriseByUser = async (req, res) => {
   
-    const {id_Localisation, id_utilisateur,image, nom_entreprise, adresse_entreprise, } = req.body.data;
+    const {id_Localisation, id_utilisateur,image, nom_entreprise, adresse_entreprise,categorie } = req.body.data;
     console.log('EnregistreEntreprise test ',image);
   
      try {
@@ -69,6 +70,7 @@ const addEntrepriseByUser = async (req, res) => {
             "id_utilisateur":id_utilisateur,
             "photo_entreprises":image,
             "id_Localisation": id_Localisation,
+            "categories": categorie
         });
         res.status(200).json({
             success: true,

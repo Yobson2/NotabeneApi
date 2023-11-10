@@ -19,6 +19,9 @@ module.exports=(sequelize, DataTypes )=>{
         photo_entreprises: {
             type: DataTypes.STRING,
         },
+        categories: {
+            type:DataTypes.STRING,
+          },
         id_Localisation: {
             type:DataTypes.INTEGER,
             references: {

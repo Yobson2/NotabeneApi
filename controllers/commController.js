@@ -6,16 +6,16 @@ const addCommentaire = async (req, res) => {
     try {
         console.log("Adding commentaire", req.body);
         const { id_photo, contenu_commentaire,  nombre_etoiles, date_creation,categorie,nom_entreprise,addresse_entreprise, id_Localisation, id_entreprise } = req.body.data;
-       
+        const texteEncode = encodeURI(contenu_commentaire);
+
         const newData = {
             id_photo,
-            contenu_commentaire,
+            contenu_commentaire:texteEncode,
             nombre_etoiles:  nombre_etoiles,
             date_commentaire: date_creation,
             categories: categorie
         };
 
-       
 
         const newComment = await Commentaires.create(newData);
         const id_commentaire = newComment.id_commentaire;
@@ -25,13 +25,13 @@ const addCommentaire = async (req, res) => {
             nom_entreprise,
             addresse_entreprise ,
             id_Localisation,
-            id_entreprise
+            id_entreprise,
+            categorie
         }
         await axios.post('http://localhost:8082/apiNotabene/v1/addEntreprise', { data });
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             message: 'Commentaire created successfully',
-            // user: newComment
         });
     } catch (error) {
         console.error('Error creating commentaire:', error);
@@ -57,7 +57,6 @@ const allCommentaire = async (req, res) => {
         ]);
 
 
-        console.log('tets ok',resultPhoto.data);
         const idsUtilisateurs = new Set(resultUser.data.map(user => user.id_utilisateur));
 
         const utilisateursAvecPhotos = resultPhoto.data.reduce((acc, photo) => {
@@ -88,7 +87,7 @@ const allCommentaire = async (req, res) => {
                     photo_user: user.photo_user,
                     id_commentaire: commentaire.dataValues.id_commentaire,
                     id_photo: commentaire.dataValues.id_photo,
-                    contenu_commentaire: commentaire.dataValues.contenu_commentaire,
+                    contenu_commentaire: decodeURI(commentaire.dataValues.contenu_commentaire),
                     date_commentaire: commentaire.dataValues.date_commentaire.toISOString().slice(0, 10),
                     heure: commentaire.dataValues.date_commentaire.getHours() + "h" + commentaire.dataValues.date_commentaire.getMinutes(),
                     nombre_etoiles: commentaire.dataValues.nombre_etoiles,
@@ -196,7 +195,7 @@ const allCommentairesDetails =async (req, res) => {
                     photo_user: user.photo_user,
                     id_commentaire: commentaire.dataValues.id_commentaire,
                     id_photo: commentaire.dataValues.id_photo,
-                    contenu_commentaire: commentaire.dataValues.contenu_commentaire,
+                    contenu_commentaire: decodeURI(commentaire.dataValues.contenu_commentaire),
                     date_commentaire: commentaire.dataValues.date_commentaire.toISOString().slice(0, 10),
                     heure: commentaire.dataValues.date_commentaire.getHours() + "h" + commentaire.dataValues.date_commentaire.getMinutes(),
                     nombre_etoiles: commentaire.dataValues.nombre_etoiles,
@@ -270,8 +269,6 @@ const getGlobalCommentaire= async (req, res) => {
             return acc;
         }, {});
 
-        console.log('tetstst',photoData.data)
-
         // // Filtrage des utilisateurs qui ont au moins une photo
         const utilisateursAvecPhotosFiltres = Object.keys(utilisateursAvecPhotos).filter(id => idsUtilisateurs.has(Number(id)));
      
@@ -291,14 +288,14 @@ const getGlobalCommentaire= async (req, res) => {
                     photo_user: user.photo_user,
                     id_commentaire: commentaire.dataValues.id_commentaire,
                     id_photo: commentaire.dataValues.id_photo,
-                    contenu_commentaire: commentaire.dataValues.contenu_commentaire,
+                    contenu_commentaire: decodeURI(commentaire.dataValues.contenu_commentaire),
                     date_commentaire: commentaire.dataValues.date_commentaire.toISOString().slice(0, 10),
                     heure: commentaire.dataValues.date_commentaire.getHours() + "h" + commentaire.dataValues.date_commentaire.getMinutes(),
                     nombre_etoiles: commentaire.dataValues.nombre_etoiles,
                     categories: commentaire.dataValues.categories,
                     createdAt: commentaire.dataValues.createdAt,
                     id_localisation:getIdLocalisationByIdPhoto(photoData.data, commentaire.dataValues.id_photo),
-                    entreprise_name: getNameByIdPhoto(entrepriseData.data, getIdLocalisationByIdPhoto(photoData.data, commentaire.dataValues.id_photo)),
+                    entreprise: getNameByIdPhoto(entrepriseData.data, getIdLocalisationByIdPhoto(photoData.data, commentaire.dataValues.id_photo)),
                 };
             });
         
@@ -317,8 +314,6 @@ const getGlobalCommentaire= async (req, res) => {
     });
       
     dataFinal.reverse();
-
-
         res.status(200).json({
             success: true,
             message: 'Commentaires récupérés avec succès',
