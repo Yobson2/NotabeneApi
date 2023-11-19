@@ -279,7 +279,6 @@ const getGlobalCommentaire= async (req, res) => {
             const userCommentaires = filterCommentaires(commData, photos);
         
             const commentaires = userCommentaires.map(commentaire => {
-                // const entreprise = entrepriseData.data.find(data => data.nom_entreprise!="");
                  
                 
                 return {

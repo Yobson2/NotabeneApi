@@ -61,7 +61,6 @@ const addEntrepriseByCommentaire = async (req, res) => {
 const addEntrepriseByUser = async (req, res) => {
   
     const {id_Localisation, id_utilisateur,image, nom_entreprise, adresse_entreprise,categorie } = req.body.data;
-    console.log('EnregistreEntreprise test ',image);
   
      try {
         const newEnterprise = await Entreprise.create({
