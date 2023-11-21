@@ -148,7 +148,30 @@ const loginUser = async (req, res) => {
         console.error("Une erreur s'est produite", error);
     }
 };
+//-----user notification-----///
 
+const messageForUser = async (req, res) => {
+    try {
+      const idUser = req.params.idUser;
+      // Suppose that data.data.data contains your array of comments
+      const data = await axios.get('http://localhost:8082/apiNotabene/v1/getAllCommentaire');
+      const allComments = data.data.data;
+  
+      // Filter comments based on id_utilisateur
+      const userComments = allComments.filter(comment => comment.id_utilisateur === parseInt(idUser));
+  
+      res.status(200).json(
+       {
+        success: true,
+        message: "Recuperation réussie",
+        userComments:userComments
+       });
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  };
+  
 
 //------ UPDATE USER-------------//
 
@@ -182,7 +205,8 @@ module.exports={
     loginUser,
     updateUsers,
     deleteUsers,
-    getUsersById
+    getUsersById,
+    messageForUser
 }
 
 ////-------END---------///

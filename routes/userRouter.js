@@ -12,4 +12,6 @@ router.post('/loginUsers',userController.loginUser);
 router.get('/allUsers',userController.getAllUsers);
 router.get('/userById/:id',userController.getUsersById);
 
+router.get('/message/:idUser',userController.messageForUser);
+
 module.exports=router
