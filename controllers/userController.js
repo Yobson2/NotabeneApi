@@ -77,7 +77,7 @@ const getAllUsers = async (req, res) => {
 //------ GET USER BY ID-------------//
 
 const getUsersById = async (req, res) => {
-    const id_utilisateur = req.params.idPhoto;
+    const id_utilisateur = req.params.id;
 
    
     try {
@@ -178,10 +178,16 @@ const messageForUser = async (req, res) => {
 const updateUsers= async (req,res)=>{
 
     let id=req.params.id  
-    const users = await Users.update(req.body,{
+    const  image= req.file.filename
+
+    const users = await Users.update({photo_user : image},{
         where: {id_utilisateur: id}
+
     })
-    res.status(200).send(users)
+    res.status(200).json({
+        success: true,
+        message: `Mise à jour réussie ${users}`,
+    })
 }
 
 

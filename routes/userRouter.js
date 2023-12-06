@@ -1,5 +1,6 @@
 const userController=require('../controllers/userController');
 const express=require('express');
+const uploadMiddlewareUser=require('../middlewares/photoUser')
 
 const router= express.Router();
 
@@ -13,5 +14,8 @@ router.get('/allUsers',userController.getAllUsers);
 router.get('/userById/:id',userController.getUsersById);
 
 router.get('/message/:idUser',userController.messageForUser);
+
+
+router.put('/user/:id',uploadMiddlewareUser,userController.updateUsers)
 
 module.exports=router

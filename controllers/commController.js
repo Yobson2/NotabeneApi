@@ -151,6 +151,7 @@ function getIdLocalisationByIdPhoto(tableau, idPhoto) {
 
 const allCommentairesDetails =async (req, res) => {
     let dataFinal=[]
+    const totalEtoilesArray = [];
     const idEntreprise=req.params.id;
     const categorie=req.params.categorie
     try {
@@ -188,11 +189,18 @@ const allCommentairesDetails =async (req, res) => {
                     entreprise.id_entreprise === Number(idEntreprise) && entreprise.id_commentaires.includes(commentaire.dataValues.id_commentaire) &&
                     categorie === commentaire.dataValues.categories
                 );
+                const nombre_etoiles = commentaire.dataValues.nombre_etoiles;
+
+                // Push stars to the array
+                totalEtoilesArray.push(nombre_etoiles);
+
+                console.log('Total', totalEtoilesArray);
         
                 return {
                     id_utilisateur: user.id_utilisateur,
                     nom_utilisateur: user.nom_utilisateur,
                     photo_user: user.photo_user,
+                    totalEtoiles:totalEtoilesArray.reduce((acc, stars) => acc + stars),
                     id_commentaire: commentaire.dataValues.id_commentaire,
                     id_photo: commentaire.dataValues.id_photo,
                     contenu_commentaire: decodeURI(commentaire.dataValues.contenu_commentaire),
@@ -207,7 +215,7 @@ const allCommentairesDetails =async (req, res) => {
         
             return { commentaires };
         });
-        
+        totalEtoilesArray.length = 0;
         // dataFinal.push( donneesCommunes);
        donneesCommunes.forEach((element, outerIndex) => {
         element.commentaires.forEach((commentaire, innerIndex) => { 
@@ -220,6 +228,8 @@ const allCommentairesDetails =async (req, res) => {
     });
       
     dataFinal.reverse();
+
+    console.log('mes données communes', dataFinal)
 
         // Fonction pour filtrer les commentaires en fonction des photos
         function filterCommentaires(commData, photos) {

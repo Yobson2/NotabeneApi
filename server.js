@@ -17,6 +17,7 @@ const app=express();
 // Définir le dossier contenant les images
 const mesImages = path.join(__dirname, 'uploads');
 const allImagesProfil = path.join(__dirname, 'uploadsProfil');
+const photoProfil = path.join(__dirname, 'userPhotos');
 
 
 //mildllewares
@@ -27,8 +28,9 @@ app.get('/',(req,res)=>{
 
 app.use('/images', express.static(mesImages));
 app.use('/imageEntreprise', express.static(allImagesProfil));
+app.use('/imageUser', express.static(photoProfil));
 
-console.log("mesImages",mesImages )
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
